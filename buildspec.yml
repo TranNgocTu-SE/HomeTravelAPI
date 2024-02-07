@@ -1,0 +1,26 @@
+version: 0.2
+    
+phases:
+  install:
+    runtime-versions:
+      dotnet: 8.0
+   
+  pre_build:
+    commands:
+      - echo Restore started on `date`
+      - dotnet restore HomeTravelAPI/HomeTravelAPI.csproj
+      
+  build:
+    commands:
+      - echo Build started on `date`
+      - dotnet build HomeTravelAPI/HomeTravelAPI.csproj
+      
+  post_build:
+    commands:
+      - echo Publish started on `date`
+      # https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/dotnet-linux-platform-bundle-app.html
+      - dotnet publish -c Release -o ./ HomeTravelAPI/HomeTravelAPI.csproj
+      
+artifacts:
+  files:
+    - '**/*'
