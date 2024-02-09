@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "apis1": {
+      "apiEndpoint": "https://hometravelservice.azure-api.net/echo",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ApiManagement/service/hometravelservice/apis/echo-api",
+      "type": "apis.azure"
+    }
+  }
+}
