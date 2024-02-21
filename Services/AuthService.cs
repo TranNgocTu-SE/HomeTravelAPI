@@ -18,26 +18,17 @@ namespace HomeTravelAPI.Services
             _configuration = configuration;
         }
 
-        public Task<string> GenerateTokenString(LoginModel model)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<string> Login(LoginModel model)
+       
+        public async Task<string> Login(LoginModel model,AppUser user)
         {
             string tokenString = null;
-            var AppUser = await _userManager.FindByNameAsync(model.UserName);
-            if (AppUser is null)
-            {
-                return null;
-            }
-            var result = await _userManager.CheckPasswordAsync(AppUser, model.Password);
+            var result = await _userManager.CheckPasswordAsync(user, model.Password);
             if (result)
             {
-                var roles = await _userManager.GetRolesAsync(AppUser);
+                var roles = await _userManager.GetRolesAsync(user);
                 var claims = new[]
                 {
-                new Claim("Email",AppUser.Email),
+                new Claim("Email",user.Email),
                 new Claim("Name",model.UserName),
                 new Claim("Role",string.Join(";",roles)),
             };
@@ -61,7 +52,7 @@ namespace HomeTravelAPI.Services
 
         public async Task<bool> Register(RegisterModel model)
         {
-            var identityUser = new AppUser { UserName = model.UserName, Email = model.Email };
+            var identityUser = new AppUser { UserName = model.UserName, FirstName = model.FirstName, LastName = model.LastName,Gender = model.Gender, Email = model.Email};
 
             var result = await _userManager.CreateAsync(identityUser, model.Password);
             return result.Succeeded;

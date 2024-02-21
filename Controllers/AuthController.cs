@@ -1,6 +1,8 @@
-﻿using HomeTravelAPI.Services;
+﻿using HomeTravelAPI.Entities;
+using HomeTravelAPI.Services;
 using HomeTravelAPI.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HomeTravelAPI.Controllers
@@ -10,8 +12,10 @@ namespace HomeTravelAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-        public AuthController(IAuthService authService)
+        private readonly UserManager<AppUser> _userManager;
+        public AuthController(UserManager<AppUser> userManage,IAuthService authService)
         {
+            _userManager = userManage;
             _authService = authService;
         }
 
@@ -19,23 +23,32 @@ namespace HomeTravelAPI.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterModel model)
         {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
             if (await _authService.Register(model))
             {
                 return Ok("success");
             }
-            return BadRequest("fail");
+            return BadRequest();
         }
 
         [HttpPost("Login")]
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginModel model)
         {
-            var result = await _authService.Login(model);
-            if (result is null)
+            var user = await _userManager.FindByNameAsync(model.UserName);
+            if (user is null)
             {
-                return BadRequest("fail");
+                return NotFound();
             }
-            return Ok(result);
+            var token = await _authService.Login(model, user);
+
+            if (token is null)
+            {
+                return BadRequest("faile");
+            }
+            return Ok( new {user,token});
         }
     }
 }

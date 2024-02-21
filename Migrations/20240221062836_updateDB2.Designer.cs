@@ -4,6 +4,7 @@ using HomeTravelAPI.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeTravelAPI.Migrations
 {
     [DbContext(typeof(HomeTravelDbContext))]
-    partial class HomeTravelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240221062836_updateDB2")]
+    partial class updateDB2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -266,33 +269,6 @@ namespace HomeTravelAPI.Migrations
                     b.ToTable("Locations");
                 });
 
-            modelBuilder.Entity("HomeTravelAPI.Entities.Owner", b =>
-                {
-                    b.Property<int>("OwnerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OwnerId"));
-
-                    b.Property<string>("AccountName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("AppUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("NameBank")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NumberBank")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("OwnerId");
-
-                    b.HasIndex("AppUserId");
-
-                    b.ToTable("Owners");
-                });
-
             modelBuilder.Entity("HomeTravelAPI.Entities.Payment", b =>
                 {
                     b.Property<int>("PaymentId")
@@ -412,33 +388,6 @@ namespace HomeTravelAPI.Migrations
                     b.ToTable("Services");
                 });
 
-            modelBuilder.Entity("HomeTravelAPI.Entities.Tourist", b =>
-                {
-                    b.Property<int>("TouristId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TouristId"));
-
-                    b.Property<int>("AppUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CartNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NameOnCart")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SecurityCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("TouristId");
-
-                    b.HasIndex("AppUserId");
-
-                    b.ToTable("Tourists");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
@@ -540,28 +489,6 @@ namespace HomeTravelAPI.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("HomeTravelAPI.Entities.Owner", b =>
-                {
-                    b.HasOne("HomeTravelAPI.Entities.AppUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
-                });
-
-            modelBuilder.Entity("HomeTravelAPI.Entities.Tourist", b =>
-                {
-                    b.HasOne("HomeTravelAPI.Entities.AppUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

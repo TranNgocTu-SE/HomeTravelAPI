@@ -18,6 +18,8 @@ namespace HomeTravelAPI.EF
         }
 
         public DbSet<AppUser> AppUsers { get; set; }
+        public DbSet<Tourist> Tourists { get; set; }
+        public DbSet<Owner> Owners { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<FeedBack> FeedBacks { get; set; }
         public DbSet<HomeStay> HomeStays { get; set; }
