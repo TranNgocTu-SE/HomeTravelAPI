@@ -7,5 +7,10 @@
         public DateTime? FeedBackDate { get; set; }
         public decimal? Rate { get; set; }
         public bool? Status { get; set; }
+
+        public Tourist Tourist { get; set; }
+        public int TouristId { get; set; }
+        public HomeStay HomeStay { get; set; }
+        public int HomeStayId { get; set; }
     }
 }

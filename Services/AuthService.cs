@@ -28,8 +28,8 @@ namespace HomeTravelAPI.Services
                 var roles = await _userManager.GetRolesAsync(user);
                 var claims = new[]
                 {
-                new Claim("Email",user.Email),
-                new Claim("Name",model.UserName),
+                new Claim(ClaimTypes.Email,user.Email),
+                new Claim(ClaimTypes.Name,model.UserName),
                 new Claim(ClaimTypes.Role,string.Join(";",roles)),
             };
 

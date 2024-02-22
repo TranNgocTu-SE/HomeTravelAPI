@@ -1,4 +1,6 @@
-﻿namespace HomeTravelAPI.Entities
+﻿using System.Collections.ObjectModel;
+
+namespace HomeTravelAPI.Entities
 {
     public class Owner
     {
@@ -9,5 +11,6 @@
 
         public AppUser AppUser { get; set; }
         public int AppUserId { get; set; }
+        public Collection<HomeStay> HomeStays { get; set; }
     }
 }

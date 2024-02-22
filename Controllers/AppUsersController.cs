@@ -9,6 +9,9 @@ using HomeTravelAPI.EF;
 using HomeTravelAPI.Entities;
 using HomeTravelAPI.ViewModels;
 using System.Security;
+using Microsoft.AspNetCore.Identity;
+using NuGet.Protocol;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HomeTravelAPI.Controllers
 {
@@ -17,11 +20,16 @@ namespace HomeTravelAPI.Controllers
     public class AppUsersController : ControllerBase
     {
         private readonly HomeTravelDbContext _context;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signManager;
 
-        public AppUsersController(HomeTravelDbContext context)
+        public AppUsersController(HomeTravelDbContext context, UserManager<AppUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
+
+
 
         // GET: api/AppUsers
         [HttpGet]
@@ -72,7 +80,6 @@ namespace HomeTravelAPI.Controllers
         }
 
         // PUT: api/AppUsers/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAppUser(int id, AppUser appUser)
         {
@@ -83,27 +90,12 @@ namespace HomeTravelAPI.Controllers
 
             _context.Entry(appUser).State = EntityState.Modified;
 
-            try
-            {
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AppUserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
             return NoContent();
         }
 
         // POST: api/AppUsers
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<AppUser>> PostAppUser(AppUser appUser)
         {
@@ -117,21 +109,23 @@ namespace HomeTravelAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAppUser(int id)
         {
-            var appUser = await _context.AppUsers.FindAsync(id);
+            var appUser = await _userManager.FindByIdAsync(id.ToString());
             if (appUser == null)
             {
                 return NotFound();
             }
 
-            _context.AppUsers.Remove(appUser);
+            await _userManager.DeleteAsync(appUser);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
-
-        private bool AppUserExists(int id)
+        [Authorize]
+        [HttpGet("userLogin")]
+        public async Task<IActionResult> AppUserExists()
         {
-            return _context.AppUsers.Any(e => e.Id == id);
+            AppUser user= await _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+            return Ok(user);
         }
     }
 }

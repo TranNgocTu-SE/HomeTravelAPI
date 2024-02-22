@@ -19,6 +19,6 @@ namespace HomeTravelAPI.Entities
         public Location Location { get; set; }
         public Collection<ImageHome> ImageHomes { get; set; }
         public Collection<Room> Rooms { get; set; }
-
+        public Owner Owner { get; set; }
     }
 }

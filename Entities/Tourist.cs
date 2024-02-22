@@ -12,5 +12,6 @@ namespace HomeTravelAPI.Entities
         public AppUser AppUser { get; set; }
         public int AppUserId { get; set; }
         public Collection<Booking> Bookings { get; set; }
+        public Collection<FeedBack> FeedBacks { get; set; }
     }
 }

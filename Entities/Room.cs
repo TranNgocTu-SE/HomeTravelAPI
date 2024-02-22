@@ -15,6 +15,5 @@ namespace HomeTravelAPI.Entities
         public RoomType RoomType { get; set; }
         public int RoomTypeId { get; set; }
 
-        public Payment Payment { get; set; }
     }
 }
