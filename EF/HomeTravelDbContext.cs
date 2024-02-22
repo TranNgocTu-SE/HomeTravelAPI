@@ -1,4 +1,5 @@
-﻿using HomeTravelAPI.Entities;
+﻿using HomeTravelAPI.Configurations;
+using HomeTravelAPI.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,13 @@ namespace HomeTravelAPI.EF
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);
+            builder.ApplyConfiguration(new AppUserConfiguration());
+            builder.ApplyConfiguration(new AppRoleConfiguration());
+            builder.Entity<IdentityUserClaim<int>>().ToTable("UserClaims");
+            builder.Entity<IdentityUserRole<int>>().ToTable("UserRoles").HasKey(x => new { x.UserId,x.RoleId});
+            builder.Entity<IdentityUserLogin<int>>().ToTable("UserLogins").HasKey(x => x.UserId);
+            builder.Entity<IdentityRoleClaim<int>>().ToTable("RoleClaims");
+            builder.Entity<IdentityUserToken<int>>().ToTable("UserTokens").HasKey(t => new { t.UserId, t.LoginProvider, t.Name }); ;
         }
 
         public DbSet<AppUser> AppUsers { get; set; }

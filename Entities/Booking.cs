@@ -10,5 +10,10 @@
         public string RentalEndDate { get; set; }
         public decimal TotalPrice { get; set; }
         public Boolean Status { get; set; }
+
+        public Tourist Tourist { get; set; }
+        public int TouristId { get; set; }
+        public HomeStay HomeStay { get; set; }
+        public int HomeStayId { get; set; }
     }
 }

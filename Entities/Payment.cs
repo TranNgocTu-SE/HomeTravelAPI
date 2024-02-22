@@ -8,5 +8,7 @@
         public decimal? ToTalPrice { get; set; }
         public string? Method { get; set; }
         public bool? Status { get; set; }
+        public Booking Booking { get; set; }
+        public int BookingId { get; set; }
     }
 }

@@ -18,6 +18,8 @@ namespace HomeTravelAPI.Entities
         public string ConfirmPassword { get; set; }
 
         //
+        public Tourist Tourist { get; set; }
+        public Owner Owner { get; set; }
 
     }
 }

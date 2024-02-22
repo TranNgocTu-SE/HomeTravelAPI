@@ -30,7 +30,7 @@ namespace HomeTravelAPI.Services
                 {
                 new Claim("Email",user.Email),
                 new Claim("Name",model.UserName),
-                new Claim("Role",string.Join(";",roles)),
+                new Claim(ClaimTypes.Role,string.Join(";",roles)),
             };
 
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:Key"]));
@@ -50,11 +50,11 @@ namespace HomeTravelAPI.Services
             return tokenString;
         }
 
-        public async Task<bool> Register(RegisterModel model)
+        public async Task<bool> Register(RegisterModel model, string roleName)
         {
-            var identityUser = new AppUser { UserName = model.UserName, FirstName = model.FirstName, LastName = model.LastName,Gender = model.Gender, Email = model.Email};
-
-            var result = await _userManager.CreateAsync(identityUser, model.Password);
+            var appUser = new AppUser {UserName = model.UserName, FirstName = model.FirstName, LastName = model.LastName, PhoneNumber=model.PhoneNumber,Gender = model.Gender, Email = model.Email,SecurityStamp = Guid.NewGuid().ToString() };
+            var result = await _userManager.CreateAsync(appUser, model.Password);
+            await _userManager.AddToRoleAsync(appUser, roleName);
             return result.Succeeded;
         }
     }

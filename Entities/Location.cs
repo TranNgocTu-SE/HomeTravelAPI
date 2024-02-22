@@ -8,5 +8,8 @@
         public string? ProvinceName { get; set; }
         public string? StreeName { get; set; }
         public string? NumberHome { get; set; }
+        //
+        public HomeStay HomeStay { get; set; }
+        public int HomeStayId { get; set; }
     }
 }

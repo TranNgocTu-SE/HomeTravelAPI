@@ -4,7 +4,6 @@ using HomeTravelAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -20,7 +19,7 @@ builder.Services.AddDbContext<HomeTravelDbContext>(opstion => opstion.UseSqlServ
 // Identity
 builder.Services.AddIdentity<AppUser, AppRole>()
                .AddEntityFrameworkStores<HomeTravelDbContext>()
-               .AddDefaultTokenProviders();
+               .AddDefaultTokenProviders() ;
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -63,6 +62,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<UserManager<AppUser>, UserManager<AppUser>>();
+builder.Services.AddTransient<RoleManager<AppRole>, RoleManager<AppRole>>();
 builder.Services.AddTransient<SignInManager<AppUser>, SignInManager<AppUser>>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -79,7 +79,9 @@ builder.Services.AddCors(options =>
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+); ;
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -130,6 +132,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

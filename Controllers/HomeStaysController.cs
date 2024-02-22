@@ -29,7 +29,8 @@ namespace HomeTravelAPI.Controllers
             {
                 return NotFound();
             }
-            return await _context.HomeStays.ToListAsync();
+            var homestays = await _context.HomeStays.Include("Service").ToListAsync();
+            return Ok(homestays);
         }
 
         // GET: api/HomeStays/5

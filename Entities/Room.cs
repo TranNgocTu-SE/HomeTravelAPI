@@ -1,4 +1,6 @@
-﻿namespace HomeTravelAPI.Entities
+﻿using System.Collections.ObjectModel;
+
+namespace HomeTravelAPI.Entities
 {
     public class Room
     {
@@ -8,5 +10,11 @@
         public decimal Price { get; set; }
         public string? Description { get; set; }
         public bool Status { get; set; }
+        public HomeStay HomeStay { get; set; }
+        public int HomeStayId { get; set; }
+        public RoomType RoomType { get; set; }
+        public int RoomTypeId { get; set; }
+
+        public Payment Payment { get; set; }
     }
 }

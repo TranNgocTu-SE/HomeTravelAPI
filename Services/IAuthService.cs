@@ -6,6 +6,6 @@ namespace HomeTravelAPI.Services
     public interface IAuthService
     {
         Task<string> Login(LoginModel model,AppUser user);
-        Task<bool> Register(RegisterModel model);
+        Task<bool> Register(RegisterModel model,string roleName);
     }
 }

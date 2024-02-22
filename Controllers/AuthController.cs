@@ -21,12 +21,12 @@ namespace HomeTravelAPI.Controllers
 
         [HttpPost("Register")]
         [AllowAnonymous]
-        public async Task<IActionResult> Register(RegisterModel model)
+        public async Task<IActionResult> Register(RegisterModel model, string roleName = "Tourist")
         {
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
-            if (await _authService.Register(model))
+            if (await _authService.Register(model,roleName))
             {
                 return Ok("success");
             }
@@ -48,7 +48,8 @@ namespace HomeTravelAPI.Controllers
             {
                 return BadRequest("faile");
             }
-            return Ok( new {user,token});
+            var account = new {Id = user.Id,UserName=user.UserName,FirstName=user.FirstName,LastName=user.LastName,Email=user.Email,Phone=user.PhoneNumber,Status=user.Status };
+            return Ok( new { account, token});
         }
     }
 }

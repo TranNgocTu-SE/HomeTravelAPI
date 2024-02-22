@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HomeTravelAPI.Controllers
 {
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Tourist")]
     [Route("/")]
     public class WeatherForecastController : ControllerBase
     {
