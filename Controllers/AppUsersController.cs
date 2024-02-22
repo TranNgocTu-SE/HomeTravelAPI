@@ -51,10 +51,10 @@ namespace HomeTravelAPI.Controllers
                     NumberBank = u.Owner.NumberBank,
                     AccountName = u.Owner.AccountName
                 };
-
+                allUser.Add(user);
 
             }
-            return Ok(users);
+            return Ok(allUser);
         }
 
         // GET: api/AppUsers/5
