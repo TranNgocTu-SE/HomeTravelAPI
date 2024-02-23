@@ -9,6 +9,7 @@ using HomeTravelAPI.EF;
 using HomeTravelAPI.Entities;
 using Microsoft.AspNetCore.Identity;
 using HomeTravelAPI.ViewModels;
+using HomeTravelAPI.Common;
 
 namespace HomeTravelAPI.Controllers
 {
@@ -37,7 +38,7 @@ namespace HomeTravelAPI.Controllers
                     Name = x.Name,
                 }).ToListAsync();
 
-            return Ok(roles);
+            return Ok(new APIResult { Status=200,Message="Success",Data=roles});
         }
 
         // GET: api/AppRoles/5

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -17,9 +18,6 @@ namespace HomeTravelAPI.Entities
         [NotMapped]
         public string ConfirmPassword { get; set; }
 
-        //
-        public Tourist Tourist { get; set; }
-        public Owner Owner { get; set; }
-
+        public Collection<Refund> Refunds { get; set; }
     }
 }

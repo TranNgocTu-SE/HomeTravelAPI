@@ -25,14 +25,13 @@ namespace HomeTravelAPI.EF
         }
 
         public DbSet<AppUser> AppUsers { get; set; }
-        public DbSet<Tourist> Tourists { get; set; }
-        public DbSet<Owner> Owners { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<FeedBack> FeedBacks { get; set; }
         public DbSet<HomeStay> HomeStays { get; set; }
         public DbSet<ImageHome> ImageHomes { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Payment> Payment { get; set; }
+        public DbSet<Refund> Refunds { get; set; }
         public DbSet<AppRole> Role { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<RoomType> RoomTypes { get; set; }

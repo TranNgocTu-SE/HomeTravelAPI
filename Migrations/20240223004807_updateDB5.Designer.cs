@@ -4,6 +4,7 @@ using HomeTravelAPI.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeTravelAPI.Migrations
 {
     [DbContext(typeof(HomeTravelDbContext))]
-    partial class HomeTravelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240223004807_updateDB5")]
+    partial class updateDB5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -374,42 +377,6 @@ namespace HomeTravelAPI.Migrations
                     b.ToTable("Policy");
                 });
 
-            modelBuilder.Entity("HomeTravelAPI.Entities.Refund", b =>
-                {
-                    b.Property<int>("RefundId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RefundId"));
-
-                    b.Property<int?>("AppUserId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("PaidAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("PaymentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Reason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ReceiveDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("RefundId");
-
-                    b.HasIndex("AppUserId");
-
-                    b.HasIndex("PaymentId")
-                        .IsUnique();
-
-                    b.ToTable("Refunds");
-                });
-
             modelBuilder.Entity("HomeTravelAPI.Entities.Room", b =>
                 {
                     b.Property<int>("RoomId")
@@ -729,23 +696,6 @@ namespace HomeTravelAPI.Migrations
                     b.Navigation("HomeStay");
                 });
 
-            modelBuilder.Entity("HomeTravelAPI.Entities.Refund", b =>
-                {
-                    b.HasOne("HomeTravelAPI.Entities.AppUser", "AppUser")
-                        .WithMany("Refunds")
-                        .HasForeignKey("AppUserId");
-
-                    b.HasOne("HomeTravelAPI.Entities.Payment", "Payment")
-                        .WithOne("Refund")
-                        .HasForeignKey("HomeTravelAPI.Entities.Refund", "PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
-
-                    b.Navigation("Payment");
-                });
-
             modelBuilder.Entity("HomeTravelAPI.Entities.Room", b =>
                 {
                     b.HasOne("HomeTravelAPI.Entities.HomeStay", "HomeStay")
@@ -843,11 +793,6 @@ namespace HomeTravelAPI.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("HomeTravelAPI.Entities.AppUser", b =>
-                {
-                    b.Navigation("Refunds");
-                });
-
             modelBuilder.Entity("HomeTravelAPI.Entities.HomeStay", b =>
                 {
                     b.Navigation("ImageHomes");
@@ -859,11 +804,6 @@ namespace HomeTravelAPI.Migrations
                     b.Navigation("Rooms");
 
                     b.Navigation("Services");
-                });
-
-            modelBuilder.Entity("HomeTravelAPI.Entities.Payment", b =>
-                {
-                    b.Navigation("Refund");
                 });
 
             modelBuilder.Entity("HomeTravelAPI.Entities.RoomType", b =>

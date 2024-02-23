@@ -12,6 +12,7 @@ using System.Security;
 using Microsoft.AspNetCore.Identity;
 using NuGet.Protocol;
 using Microsoft.AspNetCore.Authorization;
+using HomeTravelAPI.Common;
 
 namespace HomeTravelAPI.Controllers
 {
@@ -35,34 +36,8 @@ namespace HomeTravelAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetAppUsers()
         {
-
-            var users = await _context.AppUsers.Include(x => x.Tourist).Include(x => x.Owner).ToListAsync();
-
-            var allUser = new List<UserModel>();
-            foreach(var u in users)
-            {
-               var user = new UserModel
-                {
-                    Id = u.Id,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    UserName = u.UserName,
-                    Email = u.Email,
-                    Phone = u.PhoneNumber,
-                    Gender = u.Gender,
-                    Avatar = u.Avatar,
-                    Status = u.Status,
-                    NameOnCard = u.Tourist.NameOnCart,
-                    CardNumber = u.Tourist.CartNumber,
-                    SecurityCode = u.Tourist.SecurityCode,
-                    NameBank = u.Owner.NameBank,
-                    NumberBank = u.Owner.NumberBank,
-                    AccountName = u.Owner.AccountName
-                };
-                allUser.Add(user);
-
-            }
-            return Ok(allUser);
+            var users = await _context.AppUsers.ToListAsync();
+            return Ok(new APIResult { Status=200,Message="Success",Data=users});
         }
 
         // GET: api/AppUsers/5
@@ -121,7 +96,7 @@ namespace HomeTravelAPI.Controllers
             return NoContent();
         }
         [Authorize]
-        [HttpGet("userLogin")]
+        [HttpGet("currentUser")]
         public async Task<IActionResult> AppUserExists()
         {
             AppUser user= await _userManager.FindByNameAsync(HttpContext.User.Identity.Name);

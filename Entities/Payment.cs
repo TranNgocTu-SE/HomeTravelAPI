@@ -10,5 +10,6 @@
         public bool? Status { get; set; }
         public Booking Booking { get; set; }
         public int BookingId { get; set; }
+        public Refund Refund { get; set; }
     }
 }

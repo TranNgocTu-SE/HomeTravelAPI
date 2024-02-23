@@ -1,4 +1,5 @@
-﻿using HomeTravelAPI.Entities;
+﻿using HomeTravelAPI.Common;
+using HomeTravelAPI.Entities;
 using HomeTravelAPI.Services;
 using HomeTravelAPI.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -48,8 +49,8 @@ namespace HomeTravelAPI.Controllers
             {
                 return BadRequest("faile");
             }
-            var account = new {Id = user.Id,UserName=user.UserName,FirstName=user.FirstName,LastName=user.LastName,Email=user.Email,Phone=user.PhoneNumber,Status=user.Status };
-            return Ok( new { account, token});
+            var account = new {Id = user.Id,UserName=user.UserName,FirstName=user.FirstName,LastName=user.LastName,Email=user.Email,Phone=user.PhoneNumber,Status=user.Status,Token = token};
+            return Ok( new APIResult { Status = 200,Message="Login success",Data = account});
         }
     }
 }

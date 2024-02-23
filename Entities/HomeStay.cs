@@ -8,10 +8,11 @@ namespace HomeTravelAPI.Entities
     {
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int HomeStayId { get; set; }
-        public string? HomeStayName { get; set; }
-        public string? Description { get; set; }
-        public int? TotalCapacity { get; set; }
-        public bool? Status { get; set; }
+        public string HomeStayName { get; set; }
+        public string Description { get; set; }
+        public string Acreage { get; set; }
+        public int TotalCapacity { get; set; }
+        public bool Status { get; set; }
 
         //
         public Collection<Service> Services { get; set; }
