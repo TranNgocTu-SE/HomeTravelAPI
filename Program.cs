@@ -61,6 +61,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<IHomeStayService, HomeStayService>();
 builder.Services.AddTransient<UserManager<AppUser>, UserManager<AppUser>>();
 builder.Services.AddTransient<RoleManager<AppRole>, RoleManager<AppRole>>();
 builder.Services.AddTransient<SignInManager<AppUser>, SignInManager<AppUser>>();

@@ -13,6 +13,7 @@ namespace HomeTravelAPI.Entities
         public string Acreage { get; set; }
         public int TotalCapacity { get; set; }
         public bool Status { get; set; }
+        public bool IsDeleted { get; set; }
 
         //
         public Collection<Service> Services { get; set; }

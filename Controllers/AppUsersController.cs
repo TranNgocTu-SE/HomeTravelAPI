@@ -37,7 +37,7 @@ namespace HomeTravelAPI.Controllers
         public async Task<ActionResult<IEnumerable<AppUser>>> GetAppUsers()
         {
             var users = await _context.AppUsers.ToListAsync();
-            return Ok(new APIResult { Status=200,Message="Success",Data=users});
+            return Ok(new APIResult(Status:200,Message:"Success",Data:users));
         }
 
         // GET: api/AppUsers/5

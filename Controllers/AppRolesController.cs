@@ -38,7 +38,7 @@ namespace HomeTravelAPI.Controllers
                     Name = x.Name,
                 }).ToListAsync();
 
-            return Ok(new APIResult { Status=200,Message="Success",Data=roles});
+            return Ok(new APIResult(Status:200,Message:"Success",Data:roles));
         }
 
         // GET: api/AppRoles/5

@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HomeTravelAPI.EF;
 using HomeTravelAPI.Entities;
+using HomeTravelAPI.Services;
+using HomeTravelAPI.ViewModels;
+using HomeTravelAPI.Common;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace HomeTravelAPI.Controllers
 {
@@ -15,25 +19,27 @@ namespace HomeTravelAPI.Controllers
     public class HomeStaysController : ControllerBase
     {
         private readonly HomeTravelDbContext _context;
+        private readonly IHomeStayService _homeStayService;
 
-        public HomeStaysController(HomeTravelDbContext context)
+        public HomeStaysController(HomeTravelDbContext context, IHomeStayService homeStayService)
         {
             _context = context;
+            _homeStayService = homeStayService;
         }
+
 
         // GET: api/HomeStays
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<HomeStay>>> GetHomeStays()
+        public async Task<ActionResult<IEnumerable<HomeStay>>> GetAllHomeStays()
         {
-            if(_context.HomeStays == null)
+            var result = await _homeStayService.GetAll();
+            if (result == null)
             {
-                return NotFound();
+                return BadRequest("Error server");
             }
-            var homestays = await _context.HomeStays.Include("Service").ToListAsync();
-            return Ok(homestays);
+            return Ok(new APIResult(Status:200,Message:"Success",Data:result));
         }
 
-        // GET: api/HomeStays/5
         [HttpGet("{id}")]
         public async Task<ActionResult<HomeStay>> GetHomeStay(int id)
         {
@@ -77,30 +83,20 @@ namespace HomeTravelAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/HomeStays
         [HttpPost]
-        public async Task<ActionResult<HomeStay>> PostHomeStay(HomeStay homeStay)
+        public async Task<ActionResult<HomeStay>> PostHomeStay(CreateHomeStayModel homeStay)
         {
-            _context.HomeStays.Add(homeStay);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetHomeStay", new { id = homeStay.HomeStayId }, homeStay);
+            await _homeStayService.Create(homeStay);
+            return Ok(new APIResult(Status : 201, Message : "Created success" ));
         }
 
-        // DELETE: api/HomeStays/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteHomeStay(int id)
         {
-            var homeStay = await _context.HomeStays.FindAsync(id);
-            if (homeStay == null)
-            {
-                return NotFound();
-            }
-
-            _context.HomeStays.Remove(homeStay);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            var result = await _homeStayService.Delete(id);
+            if (result == 0)
+                return NotFound(new APIResult(Status: 404, Message: "Not found homestay"));
+            return Ok(new APIResult(Status: 200, Message: "Success"));
         }
 
         private bool HomeStayExists(int id)

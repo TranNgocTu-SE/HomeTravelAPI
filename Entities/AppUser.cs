@@ -12,6 +12,7 @@ namespace HomeTravelAPI.Entities
         public string Gender { get; set; }
         public string Avatar { get; set; }
         public string Status { get; set; }
+        public bool IsDeleted { get; set; }
 
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]

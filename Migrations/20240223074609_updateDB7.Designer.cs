@@ -4,6 +4,7 @@ using HomeTravelAPI.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeTravelAPI.Migrations
 {
     [DbContext(typeof(HomeTravelDbContext))]
-    partial class HomeTravelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240223074609_updateDB7")]
+    partial class updateDB7
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,9 +78,6 @@ namespace HomeTravelAPI.Migrations
 
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
@@ -218,9 +218,6 @@ namespace HomeTravelAPI.Migrations
                     b.Property<string>("HomeStayName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<int?>("OwnerId")
                         .HasColumnType("int");
 
@@ -245,7 +242,7 @@ namespace HomeTravelAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImageHomeId"));
 
-                    b.Property<int>("HomeStayId")
+                    b.Property<int?>("HomeStayId")
                         .HasColumnType("int");
 
                     b.Property<string>("ImageURL")
@@ -427,7 +424,7 @@ namespace HomeTravelAPI.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("HomeStayId")
+                    b.Property<int?>("HomeStayId")
                         .HasColumnType("int");
 
                     b.Property<string>("Length")
@@ -490,7 +487,7 @@ namespace HomeTravelAPI.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("HomeStayId")
+                    b.Property<int?>("HomeStayId")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("Price")
@@ -693,9 +690,7 @@ namespace HomeTravelAPI.Migrations
                 {
                     b.HasOne("HomeTravelAPI.Entities.HomeStay", "HomeStay")
                         .WithMany("ImageHomes")
-                        .HasForeignKey("HomeStayId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("HomeStayId");
 
                     b.Navigation("HomeStay");
                 });
@@ -754,9 +749,7 @@ namespace HomeTravelAPI.Migrations
                 {
                     b.HasOne("HomeTravelAPI.Entities.HomeStay", "HomeStay")
                         .WithMany("Rooms")
-                        .HasForeignKey("HomeStayId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("HomeStayId");
 
                     b.HasOne("HomeTravelAPI.Entities.RoomType", "RoomType")
                         .WithMany("Rooms")
@@ -771,9 +764,7 @@ namespace HomeTravelAPI.Migrations
                 {
                     b.HasOne("HomeTravelAPI.Entities.HomeStay", "HomeStay")
                         .WithMany("Services")
-                        .HasForeignKey("HomeStayId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("HomeStayId");
 
                     b.Navigation("HomeStay");
                 });

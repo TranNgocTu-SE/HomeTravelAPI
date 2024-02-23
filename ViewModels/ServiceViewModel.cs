@@ -1,6 +1,6 @@
-﻿namespace HomeTravelAPI.Entities
+﻿namespace HomeTravelAPI.ViewModels
 {
-    public class Service
+    public class ServiceViewModel
     {
         public int ServiceId { get; set; }
         public string? ServiceName { get; set; }
@@ -8,8 +8,5 @@
         public decimal? Price { get; set; }
         public bool? Status { get; set; }
 
-        //
-        public HomeStay HomeStay { get; set; }
-        public int HomeStayId { get; set; }
     }
 }

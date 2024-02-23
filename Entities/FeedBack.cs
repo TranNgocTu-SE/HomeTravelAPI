@@ -11,6 +11,5 @@
         public Tourist Tourist { get; set; }
         public int TouristId { get; set; }
         public HomeStay HomeStay { get; set; }
-        public int HomeStayId { get; set; }
     }
 }
