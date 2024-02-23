@@ -23,7 +23,7 @@ namespace HomeTravelAPI.Controllers
         [HttpGet("Location")]
         public async Task<ActionResult<IEnumerable<LocationViewModel>>> GetAllLocation([FromQuery] LocationRequestViewModel locationRequestViewModel)
         {
-            var result = await locationService.GetAll(locationRequestViewModel);
+            var result = await locationService.GetAll(locationRequestViewModel, locationRequestViewModel.totalTourist);
             if (result == null)
             {
                 return BadRequest("Error server");

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Azure;
 using HomeTravelAPI.EF;
 using HomeTravelAPI.Entities;
 using HomeTravelAPI.ViewModels;
@@ -18,13 +19,30 @@ namespace HomeTravelAPI.Services
             _context = context;
             _mapper = mapper;
         }
-        public async Task<List<LocationViewModel>> GetAll(LocationRequestViewModel locationRequestViewModel)
+        public async Task<List<LocationViewModel>> GetAll(LocationRequestViewModel locationRequestViewModel, int totalTourist)
         {
-            var filter = _mapper.Map<LocationRequestViewModel,LocationViewModel>(locationRequestViewModel);
+            var filter = _mapper.Map<LocationRequestViewModel, LocationViewModel>(locationRequestViewModel);
 
-            var responde = _context.Locations.Include(x => x.HomeStay).ProjectTo<LocationViewModel>(_mapper.ConfigurationProvider).DynamicFilter(filter).ToList();
+            var query = _context.Locations.Include(l => l.HomeStay).AsQueryable();
 
-            return responde;
+            if (!string.IsNullOrEmpty(filter.CityName))
+            {
+                query = query.Where(l => l.CityName == filter.CityName);
+            }
+            if (!string.IsNullOrEmpty(filter.DistrictName))
+            {
+                query = query.Where(l => l.DistrictName == filter.DistrictName);
+            }
+            if (!string.IsNullOrEmpty(filter.ProvinceName))
+            {
+                query = query.Where(l => l.ProvinceName == filter.ProvinceName);
+            }
+
+            query = query.Where(l => l.HomeStay.TotalCapacity >= totalTourist);
+
+            var response = await query.ProjectTo<LocationViewModel>(_mapper.ConfigurationProvider).ToListAsync();
+
+            return response;
         }
     }
 }

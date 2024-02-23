@@ -7,5 +7,6 @@ namespace HomeTravelAPI.ViewModels
         public string? CityName { get; set; }
         public string? DistrictName { get; set; }
         public string? ProvinceName { get; set; }
+        public int totalTourist { get; set; }
     }
 }
