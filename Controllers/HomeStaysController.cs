@@ -43,7 +43,7 @@ namespace HomeTravelAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<HomeStay>> GetHomeStay(int id)
         {
-            var homeStay = await _context.HomeStays.FindAsync(id);
+            var homeStay = await _homeStayService.GetById(id);
 
             if (homeStay == null)
             {
@@ -103,5 +103,6 @@ namespace HomeTravelAPI.Controllers
         {
             return _context.HomeStays.Any(e => e.HomeStayId == id);
         }
+
     }
 }

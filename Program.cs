@@ -1,3 +1,4 @@
+using AutoMapper;
 using HomeTravelAPI.EF;
 using HomeTravelAPI.Entities;
 using HomeTravelAPI.Services;
@@ -15,6 +16,8 @@ builder.Services.AddDbContext<HomeTravelDbContext>(opstion => opstion.UseSqlServ
 {
     builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
 }));
+
+    builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 // Identity
 builder.Services.AddIdentity<AppUser, AppRole>()
@@ -65,6 +68,7 @@ builder.Services.AddTransient<IHomeStayService, HomeStayService>();
 builder.Services.AddTransient<UserManager<AppUser>, UserManager<AppUser>>();
 builder.Services.AddTransient<RoleManager<AppRole>, RoleManager<AppRole>>();
 builder.Services.AddTransient<SignInManager<AppUser>, SignInManager<AppUser>>();
+builder.Services.AddTransient<ILocationService, LocationService>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
