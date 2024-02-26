@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace HomeTravelAPI.Entities
 {
     [Table("Tourists")]
-    public class Tourist :AppUser
+    public class Tourist : AppUser
     {
         public string CartNumber { get; set; }
         public string NameOnCart { get; set; }

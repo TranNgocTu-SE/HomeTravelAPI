@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Identity;
 using NuGet.Protocol;
 using Microsoft.AspNetCore.Authorization;
 using HomeTravelAPI.Common;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using Firebase.Auth;
 
 namespace HomeTravelAPI.Controllers
 {
@@ -56,28 +58,94 @@ namespace HomeTravelAPI.Controllers
 
         // PUT: api/AppUsers/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAppUser(int id, AppUser appUser)
+        public async Task<IActionResult> PutAppUser(int id, CreateUserModel appUser)
         {
-            if (id != appUser.Id)
+            var user = await _userManager.FindByIdAsync(id.ToString());
+
+            if (user == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(appUser).State = EntityState.Modified;
+            var role = await _userManager.GetRolesAsync(user);
 
+            if (role[0].Equals("Tourist"))
+            {
+                var updateUser = await _context.AppUsers.OfType<Tourist>().FirstOrDefaultAsync();
+                updateUser.UserName = appUser.UserName;
+                updateUser.FirstName = appUser.FirstName;
+                updateUser.LastName = appUser.LastName;
+                updateUser.Email = appUser.Email;
+                updateUser.PhoneNumber = appUser.Phone;
+                updateUser.Gender = appUser.Gender;
+                updateUser.CartNumber = appUser.CardNumber;
+                updateUser.NameOnCart = appUser.NameOnCard;
+                updateUser.SecurityCode = appUser.SecurityCode;
+                _context.AppUsers.Update(updateUser);
                 await _context.SaveChangesAsync();
+            }
+            else if (role[0].Equals("Owner"))
+            {
+                var updateUser = await _context.AppUsers.OfType<Owner>().FirstOrDefaultAsync();
+                updateUser.UserName = appUser.UserName;
+                updateUser.FirstName = appUser.FirstName;
+                updateUser.LastName = appUser.LastName;
+                updateUser.Email = appUser.Email;
+                updateUser.PhoneNumber = appUser.Phone;
+                updateUser.Gender = appUser.Gender;
+                updateUser.NameBank = appUser.NameBank;
+                updateUser.NumberBank = appUser.NumberBank;
+                updateUser.AccountName = appUser.AccountName;
+                _context.AppUsers.Update(updateUser);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                return BadRequest(new APIResult(Status: 500, Message: "Faile"));
+            }
 
-            return NoContent();
+            return Ok(new APIResult(Status: 200, Message: "Success"));
         }
 
         // POST: api/AppUsers
         [HttpPost]
-        public async Task<ActionResult<AppUser>> PostAppUser(AppUser appUser)
+        public async Task<ActionResult<AppUser>> PostAppUser(string roleName,CreateUserModel user,string password)
         {
-            _context.AppUsers.Add(appUser);
-            await _context.SaveChangesAsync();
+            if (roleName.Equals("Tourist")){
+                var tourist = new Tourist
+                {
+                    UserName = user.UserName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    PhoneNumber = user.Phone,
+                    Gender = user.Gender,
+                    CartNumber = user.CardNumber,
+                    NameOnCart = user.NameOnCard,
+                    SecurityCode = user.SecurityCode,
+                };
+                await _userManager.CreateAsync(tourist,password);
+                await _userManager.AddToRoleAsync(tourist, roleName);
+            };
 
-            return CreatedAtAction("GetAppUser", new { id = appUser.Id }, appUser);
+            if (roleName.Equals("Owner")){
+                var tourist = new Owner
+                {
+                    UserName = user.UserName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    PhoneNumber = user.Phone,
+                    Gender = user.Gender,
+                    NameBank = user.NameBank,
+                    NumberBank = user.NumberBank,
+                    AccountName = user.AccountName,
+                };
+                await _userManager.CreateAsync(tourist, password);
+                await _userManager.AddToRoleAsync(tourist, roleName);
+            };
+
+            return Ok(new APIResult(Status: 200, Message: "Success"));
         }
 
         // DELETE: api/AppUsers/5
@@ -89,11 +157,8 @@ namespace HomeTravelAPI.Controllers
             {
                 return NotFound();
             }
-
             await _userManager.DeleteAsync(appUser);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return Ok(new APIResult(Status: 200, Message: "Deleted Success"));
         }
         [Authorize]
         [HttpGet("currentUser")]

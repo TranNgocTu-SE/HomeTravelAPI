@@ -50,7 +50,7 @@ namespace HomeTravelAPI.Controllers
                 return NotFound();
             }
 
-            return homeStay;
+            return Ok(new APIResult(Status: 200, Message: "Success", Data: homeStay));
         }
 
         // PUT: api/HomeStays/5
@@ -86,8 +86,8 @@ namespace HomeTravelAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<HomeStay>> PostHomeStay(CreateHomeStayModel homeStay)
         {
-            await _homeStayService.Create(homeStay);
-            return Ok(new APIResult(Status : 201, Message : "Created success" ));
+            var rerult = await _homeStayService.Create(homeStay);
+            return Ok(new APIResult(Status : 201, Message : "Created success",Data: new { id = rerult}));
         }
 
         [HttpDelete("{id}")]
