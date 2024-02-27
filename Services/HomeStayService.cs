@@ -25,7 +25,7 @@ namespace HomeTravelAPI.Services
                 Acreage = model.Acreage,
                 TotalCapacity = model.TotalCapacity,
             };
-           var result = await _context.HomeStays.AddAsync(homestay);
+            var result = await _context.HomeStays.AddAsync(homestay);
             await _context.SaveChangesAsync();
             return homestay.HomeStayId;
         }
@@ -66,5 +66,22 @@ namespace HomeTravelAPI.Services
         {
             throw new NotImplementedException();
         }
+
+    /*    public async Task<(DateTime? RentalStartDate, DateTime? RentalEndDate)> GetBookingDatesForRoom(int RoomId)
+        {
+            var booking = await _context.Bookings
+                .Where(b => b.RoomId == RoomId && (b.Status == "đang được đặt" || b.Status == "đang ở"))
+                .OrderByDescending(b => b.RentalStartDate)
+                .FirstOrDefaultAsync();
+
+            if (booking != null)
+            {
+                return (booking.RentalStartDate, booking.RentalEndDate);
+            }
+            else
+            {
+                return (null, null);
+            }
+        }*/
     }
 }
