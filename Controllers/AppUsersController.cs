@@ -116,30 +116,6 @@ namespace HomeTravelAPI.Controllers
             return Ok(new APIResult(Status: 200, Message: "Success"));
         }
 
-        private async void SaveImages(List<IFormFile> files)
-        {
-            FileStream sm;
-            string imageUrl = null;
-            foreach(IFormFile file in files)
-            {
-                if (file.Length > 0)
-                {
-                    string path = Path.Combine(_environment.ContentRootPath, $"images", file.FileName);
-                    using (sm = new FileStream(path, FileMode.Create))
-                    {
-                        await file.CopyToAsync(sm);
-                    }
-                    sm = System.IO.File.Open(path, FileMode.Open);
-                    imageUrl = await UploadFile.Upload(sm, file.FileName);
-                    new ImageHome
-                    {
-                        ImageURL = imageUrl
-                    };
-                    await _context.SaveChangesAsync();
-                }
-            }
-            
-        }
         private async Task<string> SaveImage(IFormFile file)
         {
             FileStream sm;
@@ -221,6 +197,7 @@ namespace HomeTravelAPI.Controllers
                     NameBank = user.NameBank,
                     NumberBank = user.NumberBank,
                     AccountName = user.AccountName,
+                    Avatar = imageUrl
                 };
                 await _userManager.CreateAsync(tourist, user.Password);
                 await _userManager.AddToRoleAsync(tourist, user.RoleName);

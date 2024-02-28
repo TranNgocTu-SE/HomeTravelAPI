@@ -21,7 +21,7 @@ namespace HomeTravelAPI.Common
                 AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
                 ThrowOnCancel = true
             }).Child("images").Child(fileName).PutAsync(stream, cancellation.Token);
-             return await task;
+            return await task;
             
         } 
     }
