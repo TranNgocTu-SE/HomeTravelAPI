@@ -16,11 +16,11 @@ namespace HomeTravelAPI.Entities
         public bool IsDeleted { get; set; }
 
         //
-        public Collection<Service> Services { get; set; }
+        public ICollection<Service> Services { get; set; }
         public Policy Policy { get; set; }
         public Location Location { get; set; }
-        public Collection<ImageHome> ImageHomes { get; set; }
-        public Collection<Room> Rooms { get; set; }
+        public ICollection<ImageHome> ImageHomes { get; set; }
+        public ICollection<Room> Rooms { get; set; }
         public Owner Owner { get; set; }
     }
 }

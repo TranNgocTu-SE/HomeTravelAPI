@@ -9,8 +9,7 @@
         public bool? Status { get; set; }
 
         //
-        public HomeStay HomeStay { get; set; }
-        public int HomeStayId { get; set; }
+        public ICollection<HomeStay> HomeStays { get; set; }
 
         public Booking Booking { get; set; }
     }

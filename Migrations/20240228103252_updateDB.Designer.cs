@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeTravelAPI.Migrations
 {
     [DbContext(typeof(HomeTravelDbContext))]
-    [Migration("20240222091322_updateDB2")]
-    partial class updateDB2
+    [Migration("20240228103252_updateDB")]
+    partial class updateDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -79,6 +79,9 @@ namespace HomeTravelAPI.Migrations
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
@@ -118,6 +121,8 @@ namespace HomeTravelAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AppUser", (string)null);
+
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("HomeTravelAPI.Entities.Booking", b =>
@@ -131,9 +136,6 @@ namespace HomeTravelAPI.Migrations
                     b.Property<string>("ContractDescription")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("HomeStayId")
-                        .HasColumnType("int");
-
                     b.Property<int>("NumberOfTourist")
                         .HasColumnType("int");
 
@@ -146,6 +148,9 @@ namespace HomeTravelAPI.Migrations
                     b.Property<string>("RentalStartDate")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
@@ -157,7 +162,7 @@ namespace HomeTravelAPI.Migrations
 
                     b.HasKey("BookingId");
 
-                    b.HasIndex("HomeStayId");
+                    b.HasIndex("RoomId");
 
                     b.HasIndex("TouristId");
 
@@ -175,16 +180,26 @@ namespace HomeTravelAPI.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("FeedBackDate")
+                    b.Property<DateTime>("FeedBackDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal?>("Rate")
+                    b.Property<int?>("HomeStayId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Rate")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<bool?>("Status")
+                    b.Property<bool>("Status")
                         .HasColumnType("bit");
 
+                    b.Property<int>("TouristId")
+                        .HasColumnType("int");
+
                     b.HasKey("FeedBackId");
+
+                    b.HasIndex("HomeStayId");
+
+                    b.HasIndex("TouristId");
 
                     b.ToTable("FeedBacks");
                 });
@@ -197,21 +212,47 @@ namespace HomeTravelAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HomeStayId"));
 
+                    b.Property<string>("Acreage")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HomeStayName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool?>("Status")
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("TotalCapacity")
+                    b.Property<int?>("OwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("TotalCapacity")
                         .HasColumnType("int");
 
                     b.HasKey("HomeStayId");
 
+                    b.HasIndex("OwnerId");
+
                     b.ToTable("HomeStays");
+                });
+
+            modelBuilder.Entity("HomeTravelAPI.Entities.HomeStay_Service", b =>
+                {
+                    b.Property<int>("HomeStayId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("HomeStayId", "ServiceId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("HomeStay_Services");
                 });
 
             modelBuilder.Entity("HomeTravelAPI.Entities.ImageHome", b =>
@@ -258,7 +299,7 @@ namespace HomeTravelAPI.Migrations
                     b.Property<string>("ProvinceName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("StreeName")
+                    b.Property<string>("StreetName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("LocationId");
@@ -267,34 +308,6 @@ namespace HomeTravelAPI.Migrations
                         .IsUnique();
 
                     b.ToTable("Locations");
-                });
-
-            modelBuilder.Entity("HomeTravelAPI.Entities.Owner", b =>
-                {
-                    b.Property<int>("OwnerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OwnerId"));
-
-                    b.Property<string>("AccountName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("AppUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("NameBank")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NumberBank")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("OwnerId");
-
-                    b.HasIndex("AppUserId")
-                        .IsUnique();
-
-                    b.ToTable("Owners");
                 });
 
             modelBuilder.Entity("HomeTravelAPI.Entities.Payment", b =>
@@ -338,17 +351,44 @@ namespace HomeTravelAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PolicyId"));
 
+                    b.Property<string>("Accessablility")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Business")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Common")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Connectivity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FoodAndDrink")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("HomeStayId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PolicyDescription")
+                    b.Property<string>("InsideRoom")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NearbyAmenities")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PolicyTitle")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool?>("Status")
+                    b.Property<string>("SportsAndRecreation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Status")
                         .HasColumnType("bit");
+
+                    b.Property<string>("ThingsToDo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Transportation")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("PolicyId");
 
@@ -356,6 +396,42 @@ namespace HomeTravelAPI.Migrations
                         .IsUnique();
 
                     b.ToTable("Policy");
+                });
+
+            modelBuilder.Entity("HomeTravelAPI.Entities.Refund", b =>
+                {
+                    b.Property<int>("RefundId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RefundId"));
+
+                    b.Property<int?>("AppUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("PaidAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("PaymentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ReceiveDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("RefundId");
+
+                    b.HasIndex("AppUserId");
+
+                    b.HasIndex("PaymentId")
+                        .IsUnique();
+
+                    b.ToTable("Refunds");
                 });
 
             modelBuilder.Entity("HomeTravelAPI.Entities.Room", b =>
@@ -366,35 +442,39 @@ namespace HomeTravelAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomId"));
 
-                    b.Property<int>("Capacity")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("HomeStayId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PaymentId")
+                    b.Property<string>("Length")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberOfBeds")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberOfPeople")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("PriceEarlyBook")
-                        .HasColumnType("int");
+                    b.Property<string>("RoomName")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoomTypeId")
+                    b.Property<int?>("RoomTypeId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Width")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("RoomId");
 
                     b.HasIndex("HomeStayId");
-
-                    b.HasIndex("PaymentId");
 
                     b.HasIndex("RoomTypeId");
 
@@ -425,11 +505,11 @@ namespace HomeTravelAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ServiceId"));
 
+                    b.Property<int?>("BookingId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("HomeStayId")
-                        .HasColumnType("int");
 
                     b.Property<decimal?>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -442,37 +522,9 @@ namespace HomeTravelAPI.Migrations
 
                     b.HasKey("ServiceId");
 
-                    b.HasIndex("HomeStayId");
+                    b.HasIndex("BookingId");
 
                     b.ToTable("Services");
-                });
-
-            modelBuilder.Entity("HomeTravelAPI.Entities.Tourist", b =>
-                {
-                    b.Property<int>("TouristId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TouristId"));
-
-                    b.Property<int>("AppUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CartNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NameOnCart")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SecurityCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("TouristId");
-
-                    b.HasIndex("AppUserId")
-                        .IsUnique();
-
-                    b.ToTable("Tourists");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -578,11 +630,43 @@ namespace HomeTravelAPI.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("HomeTravelAPI.Entities.Owner", b =>
+                {
+                    b.HasBaseType("HomeTravelAPI.Entities.AppUser");
+
+                    b.Property<string>("AccountName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameBank")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NumberBank")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("Owners");
+                });
+
+            modelBuilder.Entity("HomeTravelAPI.Entities.Tourist", b =>
+                {
+                    b.HasBaseType("HomeTravelAPI.Entities.AppUser");
+
+                    b.Property<string>("CartNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameOnCart")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecurityCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("Tourists");
+                });
+
             modelBuilder.Entity("HomeTravelAPI.Entities.Booking", b =>
                 {
-                    b.HasOne("HomeTravelAPI.Entities.HomeStay", "HomeStay")
+                    b.HasOne("HomeTravelAPI.Entities.Room", "Room")
                         .WithMany()
-                        .HasForeignKey("HomeStayId")
+                        .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -592,9 +676,54 @@ namespace HomeTravelAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Room");
+
+                    b.Navigation("Tourist");
+                });
+
+            modelBuilder.Entity("HomeTravelAPI.Entities.FeedBack", b =>
+                {
+                    b.HasOne("HomeTravelAPI.Entities.HomeStay", "HomeStay")
+                        .WithMany()
+                        .HasForeignKey("HomeStayId");
+
+                    b.HasOne("HomeTravelAPI.Entities.Tourist", "Tourist")
+                        .WithMany("FeedBacks")
+                        .HasForeignKey("TouristId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("HomeStay");
 
                     b.Navigation("Tourist");
+                });
+
+            modelBuilder.Entity("HomeTravelAPI.Entities.HomeStay", b =>
+                {
+                    b.HasOne("HomeTravelAPI.Entities.Owner", "Owner")
+                        .WithMany("HomeStays")
+                        .HasForeignKey("OwnerId");
+
+                    b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("HomeTravelAPI.Entities.HomeStay_Service", b =>
+                {
+                    b.HasOne("HomeTravelAPI.Entities.HomeStay", "HomeStay")
+                        .WithMany("HomeStay_Services")
+                        .HasForeignKey("HomeStayId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HomeTravelAPI.Entities.Service", "Service")
+                        .WithMany("HomeStay_Services")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("HomeStay");
+
+                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("HomeTravelAPI.Entities.ImageHome", b =>
@@ -619,17 +748,6 @@ namespace HomeTravelAPI.Migrations
                     b.Navigation("HomeStay");
                 });
 
-            modelBuilder.Entity("HomeTravelAPI.Entities.Owner", b =>
-                {
-                    b.HasOne("HomeTravelAPI.Entities.AppUser", "AppUser")
-                        .WithOne("Owner")
-                        .HasForeignKey("HomeTravelAPI.Entities.Owner", "AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
-                });
-
             modelBuilder.Entity("HomeTravelAPI.Entities.Payment", b =>
                 {
                     b.HasOne("HomeTravelAPI.Entities.Booking", "Booking")
@@ -652,6 +770,23 @@ namespace HomeTravelAPI.Migrations
                     b.Navigation("HomeStay");
                 });
 
+            modelBuilder.Entity("HomeTravelAPI.Entities.Refund", b =>
+                {
+                    b.HasOne("HomeTravelAPI.Entities.AppUser", "AppUser")
+                        .WithMany("Refunds")
+                        .HasForeignKey("AppUserId");
+
+                    b.HasOne("HomeTravelAPI.Entities.Payment", "Payment")
+                        .WithOne("Refund")
+                        .HasForeignKey("HomeTravelAPI.Entities.Refund", "PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Payment");
+                });
+
             modelBuilder.Entity("HomeTravelAPI.Entities.Room", b =>
                 {
                     b.HasOne("HomeTravelAPI.Entities.HomeStay", "HomeStay")
@@ -660,41 +795,22 @@ namespace HomeTravelAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HomeTravelAPI.Entities.Payment", "Payment")
-                        .WithMany()
-                        .HasForeignKey("PaymentId");
-
                     b.HasOne("HomeTravelAPI.Entities.RoomType", "RoomType")
                         .WithMany("Rooms")
-                        .HasForeignKey("RoomTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RoomTypeId");
 
                     b.Navigation("HomeStay");
-
-                    b.Navigation("Payment");
 
                     b.Navigation("RoomType");
                 });
 
             modelBuilder.Entity("HomeTravelAPI.Entities.Service", b =>
                 {
-                    b.HasOne("HomeTravelAPI.Entities.HomeStay", "HomeStay")
+                    b.HasOne("HomeTravelAPI.Entities.Booking", "Booking")
                         .WithMany("Services")
-                        .HasForeignKey("HomeStayId");
+                        .HasForeignKey("BookingId");
 
-                    b.Navigation("HomeStay");
-                });
-
-            modelBuilder.Entity("HomeTravelAPI.Entities.Tourist", b =>
-                {
-                    b.HasOne("HomeTravelAPI.Entities.AppUser", "AppUser")
-                        .WithOne("Tourist")
-                        .HasForeignKey("HomeTravelAPI.Entities.Tourist", "AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
+                    b.Navigation("Booking");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -748,15 +864,38 @@ namespace HomeTravelAPI.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("HomeTravelAPI.Entities.Owner", b =>
+                {
+                    b.HasOne("HomeTravelAPI.Entities.AppUser", null)
+                        .WithOne()
+                        .HasForeignKey("HomeTravelAPI.Entities.Owner", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HomeTravelAPI.Entities.Tourist", b =>
+                {
+                    b.HasOne("HomeTravelAPI.Entities.AppUser", null)
+                        .WithOne()
+                        .HasForeignKey("HomeTravelAPI.Entities.Tourist", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("HomeTravelAPI.Entities.AppUser", b =>
                 {
-                    b.Navigation("Owner");
+                    b.Navigation("Refunds");
+                });
 
-                    b.Navigation("Tourist");
+            modelBuilder.Entity("HomeTravelAPI.Entities.Booking", b =>
+                {
+                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("HomeTravelAPI.Entities.HomeStay", b =>
                 {
+                    b.Navigation("HomeStay_Services");
+
                     b.Navigation("ImageHomes");
 
                     b.Navigation("Location");
@@ -764,8 +903,11 @@ namespace HomeTravelAPI.Migrations
                     b.Navigation("Policy");
 
                     b.Navigation("Rooms");
+                });
 
-                    b.Navigation("Services");
+            modelBuilder.Entity("HomeTravelAPI.Entities.Payment", b =>
+                {
+                    b.Navigation("Refund");
                 });
 
             modelBuilder.Entity("HomeTravelAPI.Entities.RoomType", b =>
@@ -773,9 +915,21 @@ namespace HomeTravelAPI.Migrations
                     b.Navigation("Rooms");
                 });
 
+            modelBuilder.Entity("HomeTravelAPI.Entities.Service", b =>
+                {
+                    b.Navigation("HomeStay_Services");
+                });
+
+            modelBuilder.Entity("HomeTravelAPI.Entities.Owner", b =>
+                {
+                    b.Navigation("HomeStays");
+                });
+
             modelBuilder.Entity("HomeTravelAPI.Entities.Tourist", b =>
                 {
                     b.Navigation("Bookings");
+
+                    b.Navigation("FeedBacks");
                 });
 #pragma warning restore 612, 618
         }

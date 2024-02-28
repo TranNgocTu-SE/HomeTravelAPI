@@ -16,6 +16,13 @@ namespace HomeTravelAPI.Services
         {
             _context = context;
         }
+        public async Task<List<HomeStay>> GetAll()
+        {
+            var homestays = await _context.HomeStays.Include(x => x.Location).Include(x => x.ImageHomes)
+                .Include(x => x.Policy).Include(x => x.Services).ToListAsync();
+
+            return homestays;
+        }
 
         public async Task<int> Create(CreateHomeStayModel model)
         {
@@ -31,9 +38,6 @@ namespace HomeTravelAPI.Services
             await _context.SaveChangesAsync();
             return homestay.HomeStayId;
         }
-
-       
-
       
         public async Task<int> Delete(int homeStayId)
         {
@@ -46,15 +50,6 @@ namespace HomeTravelAPI.Services
             _context.Update(homestay);
             await _context.SaveChangesAsync();
             return homestay.HomeStayId;
-        }
-
-        public async Task<List<HomeStay>> GetAll()
-        {
-            var homestays = await _context.HomeStays.Include(x => x.Location).Include(x => x.Policy)
-                .Include(x => x.ImageHomes).Include(x => x.Services).Include(x => x.Rooms)
-                .ToListAsync();
-
-            return homestays;
         }
 
         public async Task<HomeStay> GetById(int homeStayId)
@@ -72,21 +67,22 @@ namespace HomeTravelAPI.Services
             throw new NotImplementedException();
         }
 
-    /*    public async Task<(DateTime? RentalStartDate, DateTime? RentalEndDate)> GetBookingDatesForRoom(int RoomId)
-        {
-            var booking = await _context.Bookings
-                .Where(b => b.RoomId == RoomId && (b.Status == "đang được đặt" || b.Status == "đang ở"))
-                .OrderByDescending(b => b.RentalStartDate)
-                .FirstOrDefaultAsync();
+        
+        /*    public async Task<(DateTime? RentalStartDate, DateTime? RentalEndDate)> GetBookingDatesForRoom(int RoomId)
+            {
+                var booking = await _context.Bookings
+                    .Where(b => b.RoomId == RoomId && (b.Status == "đang được đặt" || b.Status == "đang ở"))
+                    .OrderByDescending(b => b.RentalStartDate)
+                    .FirstOrDefaultAsync();
 
-            if (booking != null)
-            {
-                return (booking.RentalStartDate, booking.RentalEndDate);
-            }
-            else
-            {
-                return (null, null);
-            }
-        }*/
+                if (booking != null)
+                {
+                    return (booking.RentalStartDate, booking.RentalEndDate);
+                }
+                else
+                {
+                    return (null, null);
+                }
+            }*/
     }
 }

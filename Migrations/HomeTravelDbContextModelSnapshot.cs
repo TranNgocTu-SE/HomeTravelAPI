@@ -22,6 +22,21 @@ namespace HomeTravelAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("HomeStayService", b =>
+                {
+                    b.Property<int>("HomeStaysHomeStayId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServicesServiceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("HomeStaysHomeStayId", "ServicesServiceId");
+
+                    b.HasIndex("ServicesServiceId");
+
+                    b.ToTable("HomeStay_Service", (string)null);
+                });
+
             modelBuilder.Entity("HomeTravelAPI.Entities.AppRole", b =>
                 {
                     b.Property<int>("Id")
@@ -493,9 +508,6 @@ namespace HomeTravelAPI.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("HomeStayId")
-                        .HasColumnType("int");
-
                     b.Property<decimal?>("Price")
                         .HasColumnType("decimal(18,2)");
 
@@ -508,8 +520,6 @@ namespace HomeTravelAPI.Migrations
                     b.HasKey("ServiceId");
 
                     b.HasIndex("BookingId");
-
-                    b.HasIndex("HomeStayId");
 
                     b.ToTable("Services");
                 });
@@ -649,6 +659,21 @@ namespace HomeTravelAPI.Migrations
                     b.ToTable("Tourists");
                 });
 
+            modelBuilder.Entity("HomeStayService", b =>
+                {
+                    b.HasOne("HomeTravelAPI.Entities.HomeStay", null)
+                        .WithMany()
+                        .HasForeignKey("HomeStaysHomeStayId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HomeTravelAPI.Entities.Service", null)
+                        .WithMany()
+                        .HasForeignKey("ServicesServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("HomeTravelAPI.Entities.Booking", b =>
                 {
                     b.HasOne("HomeTravelAPI.Entities.Room", "Room")
@@ -778,15 +803,7 @@ namespace HomeTravelAPI.Migrations
                         .WithMany("Services")
                         .HasForeignKey("BookingId");
 
-                    b.HasOne("HomeTravelAPI.Entities.HomeStay", "HomeStay")
-                        .WithMany("Services")
-                        .HasForeignKey("HomeStayId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Booking");
-
-                    b.Navigation("HomeStay");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -877,8 +894,6 @@ namespace HomeTravelAPI.Migrations
                     b.Navigation("Policy");
 
                     b.Navigation("Rooms");
-
-                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("HomeTravelAPI.Entities.Payment", b =>
