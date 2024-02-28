@@ -6,6 +6,7 @@ using HomeTravelAPI.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using HomeTravelAPI.Common;
+using Firebase.Auth;
 
 namespace HomeTravelAPI.Controllers
 {
@@ -71,6 +72,7 @@ namespace HomeTravelAPI.Controllers
                 updateUser.CartNumber = appUser.CardNumber;
                 updateUser.NameOnCart = appUser.NameOnCard;
                 updateUser.SecurityCode = appUser.SecurityCode;
+                updateUser.Avatar = await SaveImage(appUser.Avatar);
                 _context.AppUsers.Update(updateUser);
                 await _context.SaveChangesAsync();
             }
@@ -86,6 +88,7 @@ namespace HomeTravelAPI.Controllers
                 updateUser.NameBank = appUser.NameBank;
                 updateUser.NumberBank = appUser.NumberBank;
                 updateUser.AccountName = appUser.AccountName;
+                updateUser.Avatar = await SaveImage(appUser.Avatar);
                 _context.AppUsers.Update(updateUser);
                 await _context.SaveChangesAsync();
             }
@@ -97,7 +100,7 @@ namespace HomeTravelAPI.Controllers
             return Ok(new APIResult(Status: 200, Message: "Success"));
         }
 
-        private async void SaveImage(List<IFormFile> files)
+        private async void SaveImages(List<IFormFile> files)
         {
             FileStream sm;
             string imageUrl = null;
@@ -121,6 +124,24 @@ namespace HomeTravelAPI.Controllers
             }
             
         }
+        private async Task<string> SaveImage(IFormFile file)
+        {
+            FileStream sm;
+            string imageUrl = null;
+            if (file.Length > 0)
+            {
+                string path = Path.Combine(_environment.ContentRootPath, $"images", file.FileName);
+                using (sm = new FileStream(path, FileMode.Create))
+                {
+                    await file.CopyToAsync(sm);
+                }
+                sm = System.IO.File.Open(path, FileMode.Open);
+                imageUrl = await UploadFile.Upload(sm, file.FileName);
+
+            }
+            return imageUrl;
+        }
+
 
         [HttpPost]
         public async Task<ActionResult<AppUser>> PostAppUser([FromForm]CreateUserModel user)
