@@ -49,7 +49,7 @@ namespace HomeTravelAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAppUser(int id, CreateUserModel appUser)
+        public async Task<IActionResult> PutAppUser(int id, UpdateUserModel appUser)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
 
@@ -91,7 +91,23 @@ namespace HomeTravelAPI.Controllers
                 updateUser.Avatar = await SaveImage(appUser.Avatar);
                 _context.AppUsers.Update(updateUser);
                 await _context.SaveChangesAsync();
-            }
+            } 
+            else if (role[0].Equals("Admin"))
+                {
+                    var updateUser = await _context.AppUsers.OfType<Owner>().FirstOrDefaultAsync();
+                    updateUser.UserName = appUser.UserName;
+                    updateUser.FirstName = appUser.FirstName;
+                    updateUser.LastName = appUser.LastName;
+                    updateUser.Email = appUser.Email;
+                    updateUser.PhoneNumber = appUser.Phone;
+                    updateUser.Gender = appUser.Gender;
+                    updateUser.NameBank = appUser.NameBank;
+                    updateUser.NumberBank = appUser.NumberBank;
+                    updateUser.AccountName = appUser.AccountName;
+                    updateUser.Avatar = await SaveImage(appUser.Avatar);
+                    _context.AppUsers.Update(updateUser);
+                    await _context.SaveChangesAsync();
+                }
             else
             {
                 return BadRequest(new APIResult(Status: 500, Message: "Faile"));
@@ -176,6 +192,21 @@ namespace HomeTravelAPI.Controllers
                 };
                 await _userManager.CreateAsync(tourist, user.Password);
                 await _userManager.AddToRoleAsync(tourist, user.RoleName);
+            };
+            if (user.RoleName.Equals("Admin"))
+            {
+                var u = new AppUser
+                {
+                    UserName = user.UserName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    PhoneNumber = user.Phone,
+                    Gender = user.Gender,
+                    Avatar = imageUrl
+                };
+                await _userManager.CreateAsync(u, user.Password);
+                await _userManager.AddToRoleAsync(u, user.RoleName);
             };
 
             if (user.RoleName.Equals("Owner")){
