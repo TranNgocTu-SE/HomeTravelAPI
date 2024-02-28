@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HomeTravelAPI.EF;
 using HomeTravelAPI.Entities;
 using HomeTravelAPI.ViewModels;
-using System.Security;
 using Microsoft.AspNetCore.Identity;
-using NuGet.Protocol;
 using Microsoft.AspNetCore.Authorization;
 using HomeTravelAPI.Common;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
-using Firebase.Auth;
 
 namespace HomeTravelAPI.Controllers
 {
@@ -25,16 +16,17 @@ namespace HomeTravelAPI.Controllers
         private readonly HomeTravelDbContext _context;
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signManager;
+        private readonly IHostEnvironment _environment;
 
-        public AppUsersController(HomeTravelDbContext context, UserManager<AppUser> userManager)
+        public AppUsersController(HomeTravelDbContext context, UserManager<AppUser> userManager, SignInManager<AppUser> signManager, IHostEnvironment environment)
         {
             _context = context;
             _userManager = userManager;
+            _signManager = signManager;
+            _environment = environment;
         }
 
 
-
-        // GET: api/AppUsers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetAppUsers()
         {
@@ -42,7 +34,6 @@ namespace HomeTravelAPI.Controllers
             return Ok(new APIResult(Status:200,Message:"Success",Data:users));
         }
 
-        // GET: api/AppUsers/5
         [HttpGet("{id}")]
         public async Task<ActionResult<AppUser>> GetAppUser(int id)
         {
@@ -56,7 +47,6 @@ namespace HomeTravelAPI.Controllers
             return appUser;
         }
 
-        // PUT: api/AppUsers/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAppUser(int id, CreateUserModel appUser)
         {
@@ -107,11 +97,49 @@ namespace HomeTravelAPI.Controllers
             return Ok(new APIResult(Status: 200, Message: "Success"));
         }
 
-        // POST: api/AppUsers
-        [HttpPost]
-        public async Task<ActionResult<AppUser>> PostAppUser(string roleName,CreateUserModel user,string password)
+        private async void SaveImage(List<IFormFile> files)
         {
-            if (roleName.Equals("Tourist")){
+            FileStream sm;
+            string imageUrl = null;
+            foreach(IFormFile file in files)
+            {
+                if (file.Length > 0)
+                {
+                    string path = Path.Combine(_environment.ContentRootPath, $"images", file.FileName);
+                    using (sm = new FileStream(path, FileMode.Create))
+                    {
+                        await file.CopyToAsync(sm);
+                    }
+                    sm = System.IO.File.Open(path, FileMode.Open);
+                    imageUrl = await UploadFile.Upload(sm, file.FileName);
+                    new ImageHome
+                    {
+                        ImageURL = imageUrl
+                    };
+                    await _context.SaveChangesAsync();
+                }
+            }
+            
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<AppUser>> PostAppUser([FromForm]CreateUserModel user)
+        {
+
+            FileStream sm;
+            string imageUrl = null;
+              if (user.Avatar.Length > 0)
+              {
+                string path = Path.Combine(_environment.ContentRootPath, $"images", user.Avatar.FileName);
+                using(sm = new FileStream(path, FileMode.Create))
+                {
+                    await user.Avatar.CopyToAsync(sm);
+                }
+                sm = System.IO.File.Open(path, FileMode.Open);
+                imageUrl = await UploadFile.Upload(sm, user.Avatar.FileName);
+
+              }
+            if (user.RoleName.Equals("Tourist")){
                 var tourist = new Tourist
                 {
                     UserName = user.UserName,
@@ -123,12 +151,13 @@ namespace HomeTravelAPI.Controllers
                     CartNumber = user.CardNumber,
                     NameOnCart = user.NameOnCard,
                     SecurityCode = user.SecurityCode,
+                    Avatar = imageUrl
                 };
-                await _userManager.CreateAsync(tourist,password);
-                await _userManager.AddToRoleAsync(tourist, roleName);
+                await _userManager.CreateAsync(tourist, user.Password);
+                await _userManager.AddToRoleAsync(tourist, user.RoleName);
             };
 
-            if (roleName.Equals("Owner")){
+            if (user.RoleName.Equals("Owner")){
                 var tourist = new Owner
                 {
                     UserName = user.UserName,
@@ -141,14 +170,13 @@ namespace HomeTravelAPI.Controllers
                     NumberBank = user.NumberBank,
                     AccountName = user.AccountName,
                 };
-                await _userManager.CreateAsync(tourist, password);
-                await _userManager.AddToRoleAsync(tourist, roleName);
+                await _userManager.CreateAsync(tourist, user.Password);
+                await _userManager.AddToRoleAsync(tourist, user.RoleName);
             };
 
             return Ok(new APIResult(Status: 200, Message: "Success"));
         }
 
-        // DELETE: api/AppUsers/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAppUser(int id)
         {
@@ -160,6 +188,7 @@ namespace HomeTravelAPI.Controllers
             await _userManager.DeleteAsync(appUser);
             return Ok(new APIResult(Status: 200, Message: "Deleted Success"));
         }
+
         [Authorize]
         [HttpGet("currentUser")]
         public async Task<IActionResult> AppUserExists()
