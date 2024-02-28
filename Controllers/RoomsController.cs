@@ -9,6 +9,7 @@ using HomeTravelAPI.EF;
 using HomeTravelAPI.Entities;
 using HomeTravelAPI.ViewModels;
 using HomeTravelAPI.Common;
+using HomeTravelAPI.Services;
 
 namespace HomeTravelAPI.Controllers
 {
@@ -17,6 +18,7 @@ namespace HomeTravelAPI.Controllers
     public class RoomsController : ControllerBase
     {
         private readonly HomeTravelDbContext _context;
+        private readonly IHomeStayService homeStayService;
 
         public RoomsController(HomeTravelDbContext context)
         {
@@ -40,7 +42,7 @@ namespace HomeTravelAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(new APIResult(Status: 200, Message: "Success",Data:room));
+            return Ok(new APIResult(Status: 200, Message: "Success", Data: room));
         }
 
         // PUT: api/Rooms/5
@@ -68,10 +70,10 @@ namespace HomeTravelAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Room>> PostRoom(int homeStayId,CreateRoomModel room)
+        public async Task<ActionResult<Room>> PostRoom(int homeStayId, CreateRoomModel room)
         {
-           var homestay = await _context.HomeStays.FindAsync(homeStayId);
-            if(homestay == null)
+            var homestay = await _context.HomeStays.FindAsync(homeStayId);
+            if (homestay == null)
             {
                 return NotFound();
             }
@@ -106,12 +108,27 @@ namespace HomeTravelAPI.Controllers
             _context.Rooms.Remove(room);
             await _context.SaveChangesAsync();
 
-            return Ok(new APIResult(Status:200,Message:"Deleted success"));
+            return Ok(new APIResult(Status: 200, Message: "Deleted success"));
         }
 
         private bool RoomExists(int id)
         {
             return _context.Rooms.Any(e => e.RoomId == id);
         }
+
+      /*  [HttpGet("{id}")]
+        public async Task<ActionResult<(DateTime? RentalStartDate, DateTime? RentalEndDate)>> GetBookingDatesForRoom(int RoomId)
+        {
+            var (RentalStartDate, RentalEndDate) = await homeStayService.GetBookingDatesForRoom(RoomId);
+
+            if (RentalStartDate != null && RentalEndDate != null)
+            {
+                return Ok(new APIResult(Status: 200, Message: "Success", Data: (RentalStartDate, RentalEndDate)));
+            }
+            else
+            {
+                return NotFound(new APIResult(Status: 404, Message: "Booking information not found for the room."));
+            }
+        }*/
     }
 }

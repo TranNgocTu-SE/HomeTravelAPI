@@ -1,9 +1,10 @@
 ﻿using HomeTravelAPI.Entities;
 using NTQ.Sdk.Core.Attributes;
+using NTQ.Sdk.Core.ViewModels;
 
 namespace HomeTravelAPI.ViewModels
 {
-    public class LocationViewModel
+    public class LocationViewModel : SortModel
     {
         public int LocationId { get; set; }
         [StringAttribute]

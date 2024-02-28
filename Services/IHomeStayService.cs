@@ -13,5 +13,7 @@ namespace HomeTravelAPI.Services
         Task<int> Delete(int homeStayId);
 
         Task<HomeStay> GetById(int homeStayId);
+
+      //  Task<(DateTime? RentalStartDate, DateTime? RentalEndDate)> GetBookingDatesForRoom(int RoomId);
     }
 }
