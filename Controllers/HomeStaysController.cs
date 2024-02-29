@@ -53,34 +53,22 @@ namespace HomeTravelAPI.Controllers
             return Ok(new APIResult(Status: 200, Message: "Success", Data: homeStay));
         }
 
-        // PUT: api/HomeStays/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutHomeStay(int id, HomeStay homeStay)
+        public async Task<IActionResult> UpdateHomeStay(int id,[FromBody]CreateHomeStayModel home)
         {
-            if (id != homeStay.HomeStayId)
-            {
-                return BadRequest();
-            }
+            var homestay = await _context.HomeStays.FirstOrDefaultAsync(x => x.HomeStayId == id);
 
-            _context.Entry(homeStay).State = EntityState.Modified;
-
-            try
+            if (homestay == null)
             {
-                await _context.SaveChangesAsync();
+                return BadRequest("Not Found");
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!HomeStayExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            homestay.HomeStayName = home.HomeStayName;
+            homestay.Description = home.Description;
+            homestay.Acreage = home.Acreage;
+            homestay.TotalCapacity = home.TotalCapacity;
+            _context.HomeStays.Update(homestay);
+            await _context.SaveChangesAsync();
+            return Ok(new APIResult(Status: 200, Message: "Updated success"));
         }
 
         [HttpPost]
@@ -99,14 +87,10 @@ namespace HomeTravelAPI.Controllers
         {
             var result = await _homeStayService.Delete(id);
             if (result == 0)
+            {
                 return NotFound(new APIResult(Status: 404, Message: "Not found homestay"));
+            }
             return Ok(new APIResult(Status: 200, Message: "Success"));
         }
-
-        private bool HomeStayExists(int id)
-        {
-            return _context.HomeStays.Any(e => e.HomeStayId == id);
-        }
-
     }
 }

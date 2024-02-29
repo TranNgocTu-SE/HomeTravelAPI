@@ -11,6 +11,7 @@ using HomeTravelAPI.ViewModels;
 using HomeTravelAPI.Common;
 using Microsoft.Extensions.Hosting;
 using Firebase.Auth;
+using NuGet.Packaging;
 
 namespace HomeTravelAPI.Controllers
 {
@@ -47,7 +48,7 @@ namespace HomeTravelAPI.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult> PostImageHome(int homeStayId,List<IFormFile> files)
+        public async Task<ActionResult> CreateImageHome(int homeStayId,List<IFormFile> files)
         {
             List<ImageHome> list = new List<ImageHome>();
             foreach(IFormFile file in files) 
@@ -61,6 +62,34 @@ namespace HomeTravelAPI.Controllers
                 list.Add(img);
             }
             await _context.ImageHomes.AddRangeAsync(list);
+            await _context.SaveChangesAsync();
+            return Ok(new APIResult(Status: 200, Message: "Success"));
+        }
+
+        [HttpPut("UpdateImage/{id}")]
+        public async Task<ActionResult> UpdateImageHome(int id, List<IFormFile> files)
+        {
+            List<ImageHome> list = new List<ImageHome>();
+            var homestay = await _context.HomeStays.Include(x => x.ImageHomes).FirstOrDefaultAsync(x => x.HomeStayId == id);
+            if(homestay == null)
+            {
+                return BadRequest("Not Found");
+            }
+            foreach (IFormFile file in files)
+            {
+                var imageUrl = await SaveImage(file);
+                var img = new ImageHome
+                {
+                    ImageURL = imageUrl,
+                };
+                list.Add(img);
+            }
+            var images = homestay.ImageHomes;
+            if(images.Count > 0)
+            {
+                homestay.ImageHomes.Clear();
+                homestay.ImageHomes.AddRange(list);
+            }
             await _context.SaveChangesAsync();
             return Ok(new APIResult(Status: 200, Message: "Success"));
         }

@@ -147,7 +147,7 @@ namespace HomeTravelAPI.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<AppUser>> PostAppUser([FromForm]CreateUserModel user)
+        public async Task<ActionResult<AppUser>> PostAppUser([FromBody]CreateUserModel user)
         {
 
             FileStream sm;
