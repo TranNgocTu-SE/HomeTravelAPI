@@ -6,10 +6,10 @@
         public DateTime OrderDate { get; set; }
         public int NumberOfTourist { get; set; }
         public string ContractDescription { get; set; }
-        public string RentalStartDate { get; set; }
-        public string RentalEndDate { get; set; }
+        public DateTime RentalStartDate { get; set; }
+        public DateTime RentalEndDate { get; set; }
         public decimal TotalPrice { get; set; }
-        public Boolean Status { get; set; }
+        public String Status { get; set; }
 
         public Tourist Tourist { get; set; }
         public int TouristId { get; set; }

@@ -32,7 +32,7 @@ namespace HomeTravelAPI.Controllers
         public async Task<ActionResult<IEnumerable<AppRole>>> GetRole()
         {
             var roles = await _roleManager.Roles
-                .Select(x => new RoleModel()
+                .Select(x => new RoleViewModel
                 {
                     Id = x.Id,
                     Name = x.Name,
@@ -55,7 +55,6 @@ namespace HomeTravelAPI.Controllers
             return appRole;
         }
 
-        // PUT: api/AppRoles/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAppRole(int id, AppRole appRole)
         {
@@ -87,14 +86,14 @@ namespace HomeTravelAPI.Controllers
 
         // POST: api/AppRoles
         [HttpPost]
-        public async Task<ActionResult<AppRole>> PostAppRole(RoleModel role)
+        public async Task<ActionResult<AppRole>> PostAppRole(CreateRoleModel role)
         {
             if(await _roleManager.RoleExistsAsync(role.Name))
             {
                 return BadRequest("Role existed");
             }
             await _roleManager.CreateAsync(new AppRole { Name = role.Name});
-            return Created();
+            return Ok(new APIResult(Status:200,Message:"Created success"));
         }
 
         // DELETE: api/AppRoles/5

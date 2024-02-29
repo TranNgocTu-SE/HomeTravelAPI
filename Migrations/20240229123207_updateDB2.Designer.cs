@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeTravelAPI.Migrations
 {
     [DbContext(typeof(HomeTravelDbContext))]
-    [Migration("20240228110919_updateDB1")]
-    partial class updateDB1
+    [Migration("20240229123207_updateDB2")]
+    partial class updateDB2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -157,17 +157,17 @@ namespace HomeTravelAPI.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("RentalEndDate")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("RentalEndDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("RentalStartDate")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("RentalStartDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("RoomId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(18,2)");

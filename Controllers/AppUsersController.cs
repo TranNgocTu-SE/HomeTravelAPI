@@ -94,16 +94,13 @@ namespace HomeTravelAPI.Controllers
             } 
             else if (role[0].Equals("Admin"))
                 {
-                    var updateUser = await _context.AppUsers.OfType<Owner>().FirstOrDefaultAsync();
+                    var updateUser = await _context.AppUsers.FirstOrDefaultAsync();
                     updateUser.UserName = appUser.UserName;
                     updateUser.FirstName = appUser.FirstName;
                     updateUser.LastName = appUser.LastName;
                     updateUser.Email = appUser.Email;
                     updateUser.PhoneNumber = appUser.Phone;
                     updateUser.Gender = appUser.Gender;
-                    updateUser.NameBank = appUser.NameBank;
-                    updateUser.NumberBank = appUser.NumberBank;
-                    updateUser.AccountName = appUser.AccountName;
                     updateUser.Avatar = await SaveImage(appUser.Avatar);
                     _context.AppUsers.Update(updateUser);
                     await _context.SaveChangesAsync();

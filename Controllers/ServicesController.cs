@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HomeTravelAPI.EF;
 using HomeTravelAPI.Entities;
+using HomeTravelAPI.ViewModels;
+using HomeTravelAPI.Common;
 
 namespace HomeTravelAPI.Controllers
 {
@@ -28,22 +30,12 @@ namespace HomeTravelAPI.Controllers
             return await _context.Services.ToListAsync();
         }
 
-        // GET: api/Services/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Service>> GetService(int id)
+        [HttpGet("id")]
+        public async Task<List<Service>> GetService(int homeStayId)
         {
-            var service = await _context.Services.FindAsync(id);
-
-            if (service == null)
-            {
-                return NotFound();
-            }
-
-            return service;
+            return null;
         }
 
-        // PUT: api/Services/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutService(int id, Service service)
         {
@@ -73,15 +65,42 @@ namespace HomeTravelAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Services
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Service>> PostService(Service service)
+        public async Task<ActionResult<Service>> PostService(CreateServiceModel model)
         {
+            var service = new Service
+            {
+                ServiceName = model.ServiceName,
+                Description = model.Description,
+                Price = model.Price
+            };
+
             _context.Services.Add(service);
             await _context.SaveChangesAsync();
+            return Ok(new APIResult(Status:200,Message:"Created success"));
+        }
 
-            return CreatedAtAction("GetService", new { id = service.ServiceId }, service);
+
+        [HttpPost("homeStayService")]
+        public async Task<ActionResult<Service>> CreateService(int homeStayId, List<CreateServiceModel> list)
+        {
+            var homeStay = await _context.HomeStays.FirstOrDefaultAsync(x => x.HomeStayId == homeStayId);
+           
+            if (homeStay == null)
+            {
+                return NotFound();
+            }
+            foreach(CreateServiceModel sv in list)
+            {
+                var s = new Service
+                {
+                    ServiceName = sv.ServiceName,
+                    Description = sv.Description,
+                    Price = sv.Price
+                };
+            }
+            await _context.SaveChangesAsync();
+            return Ok(new APIResult(Status: 200, Message: "Success", Data: homeStay));
         }
 
         // DELETE: api/Services/5

@@ -1,8 +1,7 @@
 ﻿namespace HomeTravelAPI.ViewModels
 {
-    public class RoleModel
+    public class CreateRoleModel
     {
-        public int Id { get; set; }
         public string Name { get; set; }
     }
 }

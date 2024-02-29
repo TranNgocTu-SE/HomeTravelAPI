@@ -16,7 +16,7 @@ namespace HomeTravelAPI.Entities
         public bool IsDeleted { get; set; }
 
         //
-        public ICollection<Service> Services { get; set; }
+        public  ICollection<HomeStay_Service> HomeStay_Services { get; set; }
         public Policy Policy { get; set; }
         public Location Location { get; set; }
         public ICollection<ImageHome> ImageHomes { get; set; }

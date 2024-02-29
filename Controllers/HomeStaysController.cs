@@ -87,7 +87,11 @@ namespace HomeTravelAPI.Controllers
         public async Task<ActionResult<HomeStay>> PostHomeStay(CreateHomeStayModel homeStay)
         {
             var rerult = await _homeStayService.Create(homeStay);
-            return Ok(new APIResult(Status : 201, Message : "Created success",Data: new { id = rerult}));
+            if(rerult == 0)
+            {
+                return BadRequest("Created Faile");
+            }
+            return Ok(new APIResult(Status : 200, Message : "Created success",Data: new { id = rerult}));
         }
 
         [HttpDelete("{id}")]

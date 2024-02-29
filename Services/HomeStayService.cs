@@ -19,7 +19,7 @@ namespace HomeTravelAPI.Services
         public async Task<List<HomeStay>> GetAll()
         {
             var homestays = await _context.HomeStays.Include(x => x.Location).Include(x => x.ImageHomes)
-                .Include(x => x.Policy).Include(x => x.Services).ToListAsync();
+                .Include(x => x.Policy).Include(x => x.Rooms).ToListAsync();
 
             return homestays;
         }
@@ -28,13 +28,12 @@ namespace HomeTravelAPI.Services
         {
             var homestay = new HomeStay
             {
-                HomeStayId = model.HomeStayId,
                 HomeStayName = model.HomeStayName,
                 Description = model.Description,
                 Acreage = model.Acreage,
                 TotalCapacity = model.TotalCapacity,
             };
-            var result = await _context.HomeStays.AddAsync(homestay);
+            await _context.HomeStays.AddAsync(homestay);
             await _context.SaveChangesAsync();
             return homestay.HomeStayId;
         }

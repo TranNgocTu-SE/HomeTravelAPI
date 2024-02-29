@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeTravelAPI.Migrations
 {
     [DbContext(typeof(HomeTravelDbContext))]
-    [Migration("20240228103252_updateDB")]
-    partial class updateDB
+    [Migration("20240229040618_updateDB1")]
+    partial class updateDB1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,21 @@ namespace HomeTravelAPI.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("HomeStayService", b =>
+                {
+                    b.Property<int>("HomeStaysHomeStayId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServicesServiceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("HomeStaysHomeStayId", "ServicesServiceId");
+
+                    b.HasIndex("ServicesServiceId");
+
+                    b.ToTable("HomeStay_Service", (string)null);
+                });
 
             modelBuilder.Entity("HomeTravelAPI.Entities.AppRole", b =>
                 {
@@ -238,21 +253,6 @@ namespace HomeTravelAPI.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("HomeStays");
-                });
-
-            modelBuilder.Entity("HomeTravelAPI.Entities.HomeStay_Service", b =>
-                {
-                    b.Property<int>("HomeStayId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("HomeStayId", "ServiceId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("HomeStay_Services");
                 });
 
             modelBuilder.Entity("HomeTravelAPI.Entities.ImageHome", b =>
@@ -662,6 +662,21 @@ namespace HomeTravelAPI.Migrations
                     b.ToTable("Tourists");
                 });
 
+            modelBuilder.Entity("HomeStayService", b =>
+                {
+                    b.HasOne("HomeTravelAPI.Entities.HomeStay", null)
+                        .WithMany()
+                        .HasForeignKey("HomeStaysHomeStayId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HomeTravelAPI.Entities.Service", null)
+                        .WithMany()
+                        .HasForeignKey("ServicesServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("HomeTravelAPI.Entities.Booking", b =>
                 {
                     b.HasOne("HomeTravelAPI.Entities.Room", "Room")
@@ -705,25 +720,6 @@ namespace HomeTravelAPI.Migrations
                         .HasForeignKey("OwnerId");
 
                     b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("HomeTravelAPI.Entities.HomeStay_Service", b =>
-                {
-                    b.HasOne("HomeTravelAPI.Entities.HomeStay", "HomeStay")
-                        .WithMany("HomeStay_Services")
-                        .HasForeignKey("HomeStayId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HomeTravelAPI.Entities.Service", "Service")
-                        .WithMany("HomeStay_Services")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("HomeStay");
-
-                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("HomeTravelAPI.Entities.ImageHome", b =>
@@ -894,8 +890,6 @@ namespace HomeTravelAPI.Migrations
 
             modelBuilder.Entity("HomeTravelAPI.Entities.HomeStay", b =>
                 {
-                    b.Navigation("HomeStay_Services");
-
                     b.Navigation("ImageHomes");
 
                     b.Navigation("Location");
@@ -913,11 +907,6 @@ namespace HomeTravelAPI.Migrations
             modelBuilder.Entity("HomeTravelAPI.Entities.RoomType", b =>
                 {
                     b.Navigation("Rooms");
-                });
-
-            modelBuilder.Entity("HomeTravelAPI.Entities.Service", b =>
-                {
-                    b.Navigation("HomeStay_Services");
                 });
 
             modelBuilder.Entity("HomeTravelAPI.Entities.Owner", b =>

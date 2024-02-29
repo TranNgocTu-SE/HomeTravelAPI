@@ -17,7 +17,11 @@ namespace HomeTravelAPI.EF
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<HomeStay>().HasMany(x => x.Services).WithMany(x => x.HomeStays).UsingEntity(x => x.ToTable("HomeStay_Service"));
+            /*builder.Entity<HomeStay>().HasMany(x => x.Services).WithMany(x => x.HomeStays).
+                UsingEntity(config =>config.ToTable("HomeStay_Service"));*/
+            builder.Entity<HomeStay_Service>().ToTable("HomeStay_Service");
+            builder.Entity<HomeStay_Service>()
+                .HasKey(c => new { c.HomeStayId, c.ServiceId });
 
             builder.ApplyConfiguration(new AppUserConfiguration());
             builder.ApplyConfiguration(new AppRoleConfiguration());
@@ -29,6 +33,7 @@ namespace HomeTravelAPI.EF
         }
 
         public DbSet<AppUser> AppUsers { get; set; }
+        public DbSet<HomeStay_Service> HomeStay_Services { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<FeedBack> FeedBacks { get; set; }
         public DbSet<HomeStay> HomeStays { get; set; }
