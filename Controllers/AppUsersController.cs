@@ -18,15 +18,16 @@ namespace HomeTravelAPI.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signManager;
         private readonly IHostEnvironment _environment;
+        private readonly IImageService _imageService;
 
-        public AppUsersController(HomeTravelDbContext context, UserManager<AppUser> userManager, SignInManager<AppUser> signManager, IHostEnvironment environment)
+        public AppUsersController(HomeTravelDbContext context, UserManager<AppUser> userManager, SignInManager<AppUser> signManager, IHostEnvironment environment, IImageService imageService)
         {
             _context = context;
             _userManager = userManager;
             _signManager = signManager;
             _environment = environment;
+            _imageService = imageService;
         }
-
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetAppUsers()
@@ -121,7 +122,7 @@ namespace HomeTravelAPI.Controllers
             {
                 return NotFound();
             }
-            user.Avatar = await SaveImage(image);
+            user.Avatar = _imageService.UploadImageToAzure(image);
             _context.AppUsers.Update(user);
             await _context.SaveChangesAsync();
             return Ok(new APIResult(Status: 200, Message: "Success"));
@@ -147,22 +148,8 @@ namespace HomeTravelAPI.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<AppUser>> PostAppUser([FromBody]CreateUserModel user)
+        public async Task<ActionResult<AppUser>> PostAppUser(CreateUserModel user)
         {
-
-            FileStream sm;
-            string imageUrl = null;
-              if (user.Avatar.Length > 0)
-              {
-                string path = Path.Combine(_environment.ContentRootPath, $"images", user.Avatar.FileName);
-                using(sm = new FileStream(path, FileMode.Create))
-                {
-                    await user.Avatar.CopyToAsync(sm);
-                }
-                sm = System.IO.File.Open(path, FileMode.Open);
-                imageUrl = await UploadFile.Upload(sm, user.Avatar.FileName);
-
-              }
             if (user.RoleName.Equals("Tourist")){
                 var tourist = new Tourist
                 {
@@ -175,9 +162,10 @@ namespace HomeTravelAPI.Controllers
                     CartNumber = user.CardNumber,
                     NameOnCart = user.NameOnCard,
                     SecurityCode = user.SecurityCode,
-                    Avatar = imageUrl
+                    Avatar = _imageService.UploadImageToAzure(user.Avatar)
                 };
                 await _userManager.CreateAsync(tourist, user.Password);
+                
                 await _userManager.AddToRoleAsync(tourist, user.RoleName);
             };
             if (user.RoleName.Equals("Admin"))
@@ -190,14 +178,14 @@ namespace HomeTravelAPI.Controllers
                     Email = user.Email,
                     PhoneNumber = user.Phone,
                     Gender = user.Gender,
-                    Avatar = imageUrl
+                    Avatar = _imageService.UploadImageToAzure(user.Avatar)
                 };
                 await _userManager.CreateAsync(u, user.Password);
                 await _userManager.AddToRoleAsync(u, user.RoleName);
             };
 
             if (user.RoleName.Equals("Owner")){
-                var tourist = new Owner
+                var owner = new Owner
                 {
                     UserName = user.UserName,
                     FirstName = user.FirstName,
@@ -208,10 +196,10 @@ namespace HomeTravelAPI.Controllers
                     NameBank = user.NameBank,
                     NumberBank = user.NumberBank,
                     AccountName = user.AccountName,
-                    Avatar = imageUrl
+                    Avatar = _imageService.UploadImageToAzure(user.Avatar)
                 };
-                await _userManager.CreateAsync(tourist, user.Password);
-                await _userManager.AddToRoleAsync(tourist, user.RoleName);
+                await _userManager.CreateAsync(owner, user.Password);
+                await _userManager.AddToRoleAsync(owner, user.RoleName);
             };
 
             return Ok(new APIResult(Status: 200, Message: "Success"));

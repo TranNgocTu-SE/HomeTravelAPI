@@ -1,4 +1,4 @@
-using AutoMapper;
+using HomeTravelAPI.Common;
 using HomeTravelAPI.EF;
 using HomeTravelAPI.Entities;
 using HomeTravelAPI.Services;
@@ -63,6 +63,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.Configure<AzureOption>(builder.Configuration.GetSection("Azure"));
+builder.Services.AddTransient<IImageService, ImageService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IHomeStayService, HomeStayService>();
 builder.Services.AddTransient<UserManager<AppUser>, UserManager<AppUser>>();
