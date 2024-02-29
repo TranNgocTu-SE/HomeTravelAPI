@@ -71,8 +71,6 @@ namespace HomeTravelAPI.Controllers
             var service = new Service
             {
                 ServiceName = model.ServiceName,
-                Description = model.Description,
-                Price = model.Price
             };
 
             _context.Services.Add(service);
@@ -95,8 +93,6 @@ namespace HomeTravelAPI.Controllers
                 var s = new Service
                 {
                     ServiceName = sv.ServiceName,
-                    Description = sv.Description,
-                    Price = sv.Price
                 };
             }
             await _context.SaveChangesAsync();

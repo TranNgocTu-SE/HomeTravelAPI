@@ -4,6 +4,7 @@ using HomeTravelAPI.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeTravelAPI.Migrations
 {
     [DbContext(typeof(HomeTravelDbContext))]
-    partial class HomeTravelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240229140016_updateDB4")]
+    partial class updateDB4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -164,21 +167,6 @@ namespace HomeTravelAPI.Migrations
                     b.HasIndex("TouristId");
 
                     b.ToTable("Bookings");
-                });
-
-            modelBuilder.Entity("HomeTravelAPI.Entities.BookingDetail", b =>
-                {
-                    b.Property<int>("BookingId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BookingId", "RoomId");
-
-                    b.HasIndex("RoomId");
-
-                    b.ToTable("BookingDetail", (string)null);
                 });
 
             modelBuilder.Entity("HomeTravelAPI.Entities.FeedBack", b =>
@@ -682,25 +670,6 @@ namespace HomeTravelAPI.Migrations
                     b.Navigation("Tourist");
                 });
 
-            modelBuilder.Entity("HomeTravelAPI.Entities.BookingDetail", b =>
-                {
-                    b.HasOne("HomeTravelAPI.Entities.Booking", "Booking")
-                        .WithMany("BookingDetails")
-                        .HasForeignKey("BookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HomeTravelAPI.Entities.Room", "Room")
-                        .WithMany("BookingDetails")
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Booking");
-
-                    b.Navigation("Room");
-                });
-
             modelBuilder.Entity("HomeTravelAPI.Entities.FeedBack", b =>
                 {
                     b.HasOne("HomeTravelAPI.Entities.HomeStay", "HomeStay")
@@ -898,11 +867,6 @@ namespace HomeTravelAPI.Migrations
                     b.Navigation("Refunds");
                 });
 
-            modelBuilder.Entity("HomeTravelAPI.Entities.Booking", b =>
-                {
-                    b.Navigation("BookingDetails");
-                });
-
             modelBuilder.Entity("HomeTravelAPI.Entities.HomeStay", b =>
                 {
                     b.Navigation("HomeStay_Services");
@@ -919,11 +883,6 @@ namespace HomeTravelAPI.Migrations
             modelBuilder.Entity("HomeTravelAPI.Entities.Payment", b =>
                 {
                     b.Navigation("Refund");
-                });
-
-            modelBuilder.Entity("HomeTravelAPI.Entities.Room", b =>
-                {
-                    b.Navigation("BookingDetails");
                 });
 
             modelBuilder.Entity("HomeTravelAPI.Entities.RoomType", b =>

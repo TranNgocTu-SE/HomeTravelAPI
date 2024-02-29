@@ -16,6 +16,7 @@ namespace HomeTravelAPI.Entities
         public HomeStay HomeStay { get; set; }
         public RoomType RoomType { get; set; }
         public int HomeStayId { get; set; }
+        public ICollection<BookingDetail> BookingDetails { get; set; }
 
     }
 }

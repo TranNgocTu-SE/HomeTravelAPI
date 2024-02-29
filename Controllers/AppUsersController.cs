@@ -49,7 +49,7 @@ namespace HomeTravelAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAppUser(int id, UpdateUserModel appUser)
+        public async Task<IActionResult> UpdateUser(int id,[FromBody]UpdateUserModel appUser)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
 
@@ -72,7 +72,7 @@ namespace HomeTravelAPI.Controllers
                 updateUser.CartNumber = appUser.CardNumber;
                 updateUser.NameOnCart = appUser.NameOnCard;
                 updateUser.SecurityCode = appUser.SecurityCode;
-                updateUser.Avatar = await SaveImage(appUser.Avatar);
+                //updateUser.Avatar = await SaveImage(appUser.Avatar);
                 _context.AppUsers.Update(updateUser);
                 await _context.SaveChangesAsync();
             }
@@ -88,7 +88,7 @@ namespace HomeTravelAPI.Controllers
                 updateUser.NameBank = appUser.NameBank;
                 updateUser.NumberBank = appUser.NumberBank;
                 updateUser.AccountName = appUser.AccountName;
-                updateUser.Avatar = await SaveImage(appUser.Avatar);
+                //updateUser.Avatar = await SaveImage(appUser.Avatar);
                 _context.AppUsers.Update(updateUser);
                 await _context.SaveChangesAsync();
             } 
@@ -101,7 +101,7 @@ namespace HomeTravelAPI.Controllers
                     updateUser.Email = appUser.Email;
                     updateUser.PhoneNumber = appUser.Phone;
                     updateUser.Gender = appUser.Gender;
-                    updateUser.Avatar = await SaveImage(appUser.Avatar);
+                   // updateUser.Avatar = await SaveImage(appUser.Avatar);
                     _context.AppUsers.Update(updateUser);
                     await _context.SaveChangesAsync();
                 }
@@ -110,6 +110,20 @@ namespace HomeTravelAPI.Controllers
                 return BadRequest(new APIResult(Status: 500, Message: "Faile"));
             }
 
+            return Ok(new APIResult(Status: 200, Message: "Success"));
+        }
+
+        [HttpPut("UpdateImage/{id}")]
+        public async Task<IActionResult> UpdateImage(int id, IFormFile image)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return NotFound();
+            }
+            user.Avatar = await SaveImage(image);
+            _context.AppUsers.Update(user);
+            await _context.SaveChangesAsync();
             return Ok(new APIResult(Status: 200, Message: "Success"));
         }
 

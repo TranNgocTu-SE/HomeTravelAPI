@@ -23,6 +23,10 @@ namespace HomeTravelAPI.EF
             builder.Entity<HomeStay_Service>()
                 .HasKey(c => new { c.HomeStayId, c.ServiceId });
 
+            builder.Entity<BookingDetail>().ToTable("BookingDetail");
+            builder.Entity<BookingDetail>()
+                .HasKey(c => new { c.BookingId, c.RoomId });
+
             builder.ApplyConfiguration(new AppUserConfiguration());
             builder.ApplyConfiguration(new AppRoleConfiguration());
             builder.Entity<IdentityUserClaim<int>>().ToTable("UserClaims");
@@ -34,6 +38,7 @@ namespace HomeTravelAPI.EF
 
         public DbSet<AppUser> AppUsers { get; set; }
         public DbSet<HomeStay_Service> HomeStay_Services { get; set; }
+        public DbSet<BookingDetail> BookingDetails { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<FeedBack> FeedBacks { get; set; }
         public DbSet<HomeStay> HomeStays { get; set; }
