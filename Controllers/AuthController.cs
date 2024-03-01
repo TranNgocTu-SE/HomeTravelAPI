@@ -29,9 +29,9 @@ namespace HomeTravelAPI.Controllers
             }
             if (await _authService.Register(model,roleName))
             {
-                return Ok("success");
+                return Ok(new APIResult(Status: 200, Message: "Success"));
             }
-            return BadRequest();
+            return BadRequest(ModelState);
         }
 
         [HttpPost("Login")]

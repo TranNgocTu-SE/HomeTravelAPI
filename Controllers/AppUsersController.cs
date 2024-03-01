@@ -222,7 +222,8 @@ namespace HomeTravelAPI.Controllers
         public async Task<IActionResult> AppUserExists()
         {
             AppUser user= await _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
-            return Ok(user);
+            IList<string> role = await _userManager.GetRolesAsync(user);
+            return Ok(new APIResult(Status:200,Message:"Success",Data:user));
         }
     }
 }

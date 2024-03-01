@@ -1,8 +1,11 @@
-﻿using HomeTravelAPI.Entities;
+﻿using Firebase.Auth;
+using HomeTravelAPI.Entities;
 using HomeTravelAPI.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security;
 using System.Security.Claims;
 using System.Text;
 
@@ -52,10 +55,45 @@ namespace HomeTravelAPI.Services
 
         public async Task<bool> Register(RegisterModel model, string roleName)
         {
-            var appUser = new AppUser {UserName = model.UserName, FirstName = model.FirstName, LastName = model.LastName, PhoneNumber=model.PhoneNumber,Gender = model.Gender, Email = model.Email,SecurityStamp = Guid.NewGuid().ToString() };
-            var result = await _userManager.CreateAsync(appUser, model.Password);
-            await _userManager.AddToRoleAsync(appUser, roleName);
-            return result.Succeeded;
+            if(roleName.Equals("Tourist"))
+            {
+                var tourist = new Tourist
+                {
+                    UserName = model.UserName,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    PhoneNumber = model.PhoneNumber,
+                    Gender = model.Gender,
+                    Email = model.Email,
+                    NameOnCart = model.NameOnCard,
+                    CartNumber = model.CardNumber,
+                    SecurityCode = model.SecurityCode,
+                    SecurityStamp = Guid.NewGuid().ToString()
+                };
+                await _userManager.CreateAsync(tourist, model.Password);
+                await _userManager.AddToRoleAsync(tourist, roleName);
+            }
+            else if (roleName.Equals("Owner"))
+            {
+                var owner = new Owner
+                {
+                    UserName = model.UserName,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    PhoneNumber = model.PhoneNumber,
+                    Gender = model.Gender,
+                    Email = model.Email,
+                    NameBank = model.NameBank,
+                    NumberBank = model.NumberBank,
+                    AccountName = model.AccountName,
+                    SecurityStamp = Guid.NewGuid().ToString()
+                };
+                await _userManager.CreateAsync(owner, model.Password);
+                await _userManager.AddToRoleAsync(owner, roleName);
+            }
+           
+            
+            return true;
         }
     }
 }
