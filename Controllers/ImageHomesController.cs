@@ -21,11 +21,13 @@ namespace HomeTravelAPI.Controllers
     {
         private readonly HomeTravelDbContext _context;
         private readonly IHostEnvironment _environment;
+        private readonly IImageService _imageService;
 
-        public ImageHomesController(HomeTravelDbContext context, IHostEnvironment environment)
+        public ImageHomesController(HomeTravelDbContext context, IHostEnvironment environment, IImageService imageService)
         {
             _context = context;
             _environment = environment;
+            _imageService = imageService;
         }
 
         private async Task<string> SaveImage(IFormFile file)
@@ -53,7 +55,7 @@ namespace HomeTravelAPI.Controllers
             List<ImageHome> list = new List<ImageHome>();
             foreach(IFormFile file in files) 
             {
-               var imageUrl = await SaveImage(file);
+               var imageUrl = _imageService.UploadImageToAzure(file);
                var img = new ImageHome
                 {
                     ImageURL = imageUrl,
@@ -77,7 +79,7 @@ namespace HomeTravelAPI.Controllers
             }
             foreach (IFormFile file in files)
             {
-                var imageUrl = await SaveImage(file);
+                var imageUrl = _imageService.UploadImageToAzure(file);
                 var img = new ImageHome
                 {
                     ImageURL = imageUrl,
@@ -108,10 +110,6 @@ namespace HomeTravelAPI.Controllers
 
             return Ok(new APIResult(Status: 200, Message: "Success"));
         }
-
-        private bool ImageHomeExists(int id)
-        {
-            return _context.ImageHomes.Any(e => e.ImageHomeId == id);
-        }
+     
     }
 }
