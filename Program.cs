@@ -64,7 +64,9 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.Configure<AzureOption>(builder.Configuration.GetSection("Azure"));
+builder.Services.Configure<EmailOption>(builder.Configuration.GetSection("SendGridEmailSettings"));
 builder.Services.AddTransient<IImageService, ImageService>();
+builder.Services.AddTransient<IMailService, EmailSender>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IHomeStayService, HomeStayService>();
 builder.Services.AddTransient<UserManager<AppUser>, UserManager<AppUser>>();

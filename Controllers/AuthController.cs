@@ -14,10 +14,13 @@ namespace HomeTravelAPI.Controllers
     {
         private readonly IAuthService _authService;
         private readonly UserManager<AppUser> _userManager;
-        public AuthController(UserManager<AppUser> userManage,IAuthService authService)
+        private readonly IMailService _mailService;
+
+        public AuthController(IAuthService authService, UserManager<AppUser> userManager, IMailService mailService)
         {
-            _userManager = userManage;
             _authService = authService;
+            _userManager = userManager;
+            _mailService = mailService;
         }
 
         [HttpPost("Register")]
@@ -49,8 +52,28 @@ namespace HomeTravelAPI.Controllers
             {
                 return BadRequest("faile");
             }
+
+            await _mailService.SendMail(user.Email,"Login success");
             var account = new {Id = user.Id,UserName=user.UserName,FirstName=user.FirstName,LastName=user.LastName,Email=user.Email,Phone=user.PhoneNumber,Status=user.Status,Token = token};
             return Ok( new APIResult(Status: 200,Message:"Login success",Data : account));
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user is null)
+            {
+                return BadRequest("Not Found User");
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var link = Url.Action("ResetPassword", "Auth", new { token, email = user.Email }, Request.Scheme);
+            var message = "Confirm link:" + link;
+            await _mailService.SendMail(user.Email,message);
+            return Ok(new APIResult(Status: 200, Message: "Open email and confirm"));
+
         }
     }
 }

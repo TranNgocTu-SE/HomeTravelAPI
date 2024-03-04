@@ -50,7 +50,7 @@ namespace HomeTravelAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id,[FromBody]UpdateUserModel appUser)
+        public async Task<IActionResult> UpdateUser(int id,UpdateUserModel appUser)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
 
@@ -63,48 +63,41 @@ namespace HomeTravelAPI.Controllers
 
             if (role[0].Equals("Tourist"))
             {
-                var updateUser = await _context.AppUsers.OfType<Tourist>().FirstOrDefaultAsync();
-                updateUser.UserName = appUser.UserName;
-                updateUser.FirstName = appUser.FirstName;
-                updateUser.LastName = appUser.LastName;
-                updateUser.Email = appUser.Email;
-                updateUser.PhoneNumber = appUser.Phone;
-                updateUser.Gender = appUser.Gender;
-                updateUser.CartNumber = appUser.CardNumber;
-                updateUser.NameOnCart = appUser.NameOnCard;
-                updateUser.SecurityCode = appUser.SecurityCode;
-                //updateUser.Avatar = await SaveImage(appUser.Avatar);
-                _context.AppUsers.Update(updateUser);
-                await _context.SaveChangesAsync();
+                var tourist = await _userManager.FindByIdAsync(id.ToString()) as Tourist;
+                tourist.UserName = appUser.UserName;
+                tourist.FirstName = appUser.FirstName;
+                tourist.LastName = appUser.LastName;
+                tourist.Email = appUser.Email;
+                tourist.PhoneNumber = appUser.Phone;
+                tourist.Gender = appUser.Gender;
+                tourist.CartNumber = appUser.CardNumber;
+                tourist.NameOnCart = appUser.NameOnCard;
+                tourist.SecurityCode = appUser.SecurityCode;
+                await _userManager.UpdateAsync(tourist); 
             }
             else if (role[0].Equals("Owner"))
             {
-                var updateUser = await _context.AppUsers.OfType<Owner>().FirstOrDefaultAsync();
-                updateUser.UserName = appUser.UserName;
-                updateUser.FirstName = appUser.FirstName;
-                updateUser.LastName = appUser.LastName;
-                updateUser.Email = appUser.Email;
-                updateUser.PhoneNumber = appUser.Phone;
-                updateUser.Gender = appUser.Gender;
-                updateUser.NameBank = appUser.NameBank;
-                updateUser.NumberBank = appUser.NumberBank;
-                updateUser.AccountName = appUser.AccountName;
-                //updateUser.Avatar = await SaveImage(appUser.Avatar);
-                _context.AppUsers.Update(updateUser);
-                await _context.SaveChangesAsync();
+                var owner = await _userManager.FindByIdAsync(id.ToString()) as Owner;
+                owner.UserName = appUser.UserName;
+                owner.FirstName = appUser.FirstName;
+                owner.LastName = appUser.LastName;
+                owner.Email = appUser.Email;
+                owner.PhoneNumber = appUser.Phone;
+                owner.Gender = appUser.Gender;
+                owner.NameBank = appUser.NameBank;
+                owner.NumberBank = appUser.NumberBank;
+                owner.AccountName = appUser.AccountName;
+                await _userManager.UpdateAsync(owner);
             } 
             else if (role[0].Equals("Admin"))
                 {
-                    var updateUser = await _context.AppUsers.FirstOrDefaultAsync();
-                    updateUser.UserName = appUser.UserName;
-                    updateUser.FirstName = appUser.FirstName;
-                    updateUser.LastName = appUser.LastName;
-                    updateUser.Email = appUser.Email;
-                    updateUser.PhoneNumber = appUser.Phone;
-                    updateUser.Gender = appUser.Gender;
-                   // updateUser.Avatar = await SaveImage(appUser.Avatar);
-                    _context.AppUsers.Update(updateUser);
-                    await _context.SaveChangesAsync();
+                    user.UserName = appUser.UserName;
+                    user.FirstName = appUser.FirstName;
+                    user.LastName = appUser.LastName;
+                    user.Email = appUser.Email;
+                    user.PhoneNumber = appUser.Phone;
+                    user.Gender = appUser.Gender;
+                    await _userManager.UpdateAsync(user);
                 }
             else
             {
