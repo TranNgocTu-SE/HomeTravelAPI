@@ -39,7 +39,7 @@ namespace HomeTravelAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<AppUser>> GetAppUser(int id)
         {
-            var appUser = await _context.AppUsers.FindAsync(id);
+            var appUser = await _userManager.FindByIdAsync(id.ToString());
 
             if (appUser == null)
             {
@@ -64,15 +64,15 @@ namespace HomeTravelAPI.Controllers
             if (role[0].Equals("Tourist"))
             {
                 var tourist = await _userManager.FindByIdAsync(id.ToString()) as Tourist;
-                tourist.UserName = appUser.UserName;
-                tourist.FirstName = appUser.FirstName;
-                tourist.LastName = appUser.LastName;
-                tourist.Email = appUser.Email;
-                tourist.PhoneNumber = appUser.Phone;
-                tourist.Gender = appUser.Gender;
-                tourist.CartNumber = appUser.CardNumber;
-                tourist.NameOnCart = appUser.NameOnCard;
-                tourist.SecurityCode = appUser.SecurityCode;
+                tourist.UserName = (string.IsNullOrEmpty(appUser.UserName) ? tourist.UserName : appUser.UserName);
+                tourist.FirstName = (string.IsNullOrEmpty(appUser.FirstName) ? tourist.FirstName : appUser.FirstName);
+                tourist.LastName = (string.IsNullOrEmpty(appUser.LastName) ? tourist.LastName : appUser.LastName); 
+                tourist.Email = (string.IsNullOrEmpty(appUser.Email) ? tourist.Email : appUser.Email);
+                tourist.PhoneNumber = (string.IsNullOrEmpty(appUser.Phone) ? tourist.PhoneNumber : appUser.Phone);
+                tourist.Gender = (string.IsNullOrEmpty(appUser.Gender) ? tourist.Gender : appUser.Gender);
+                tourist.CartNumber = (string.IsNullOrEmpty(appUser.CardNumber) ? tourist.CartNumber : appUser.CardNumber);
+                tourist.NameOnCart = (string.IsNullOrEmpty(appUser.NameOnCard) ? tourist.NameOnCart : appUser.NameOnCard);
+                tourist.SecurityCode = (string.IsNullOrEmpty(appUser.SecurityCode) ? tourist.SecurityCode : appUser.SecurityCode);
                 await _userManager.UpdateAsync(tourist); 
             }
             else if (role[0].Equals("Owner"))
